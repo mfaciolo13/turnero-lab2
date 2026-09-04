@@ -1,4 +1,4 @@
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import Encabezado from '../components/Encabezado';
 import ResumenDelDia from '../components/ResumenDelDia';
 import ListaEspecialidades from '../components/ListaEspecialidades';
@@ -8,19 +8,15 @@ import Aviso from '../components/Aviso';
 import { centro, especialidades, indicadores, profesionales } from '../data/centro';
 import { colores } from '../theme/colores';
 
-const espacioSuperior = Platform.select({ android: 38, ios: 58, default: 30 });
-
 const PantallaTurnos = () => (
   <View style={estilos.pantalla}>
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ paddingTop: espacioSuperior }}>
-        <Encabezado
-          nombre={centro.nombre}
-          sede={centro.sede}
-          fecha={centro.fecha}
-          logo={require('../../assets/icon.png')}
-        />
-      </View>
+      <Encabezado
+        nombre={centro.nombre}
+        sede={centro.sede}
+        fecha={centro.fecha}
+        logo={require('../../assets/icon.png')}
+      />
 
       <ResumenDelDia indicadores={indicadores} />
 

@@ -1,4 +1,5 @@
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colores } from '../theme/colores';
 
 type Props = {
@@ -8,8 +9,11 @@ type Props = {
   logo: ImageSourcePropType;
 };
 
-const Encabezado = ({ nombre, sede, fecha, logo }: Props) => (
-  <View style={estilos.contenedor}>
+const Encabezado = ({ nombre, sede, fecha, logo }: Props) => {
+  const insets = useSafeAreaInsets();
+
+  return (
+  <View style={[estilos.contenedor, { paddingTop: insets.top + 12 }]}>
     <View style={estilos.fila}>
       <Image style={estilos.logo} source={logo} />
       <View style={estilos.textos}>
@@ -21,7 +25,8 @@ const Encabezado = ({ nombre, sede, fecha, logo }: Props) => (
       <Text style={estilos.fechaTexto}>{fecha}</Text>
     </View>
   </View>
-);
+  );
+};
 
 const estilos = StyleSheet.create({
   contenedor: {

@@ -1,7 +1,7 @@
 import { Centro, Especialidad, Metrica, Profesional } from '../types';
 
 export const centro: Centro = {
-  nombre: 'Turnero San Rafael',
+  nombre: 'Turnero Laboratorio 2',
   sede: 'Sede Centro - Av. Colon 1240',
   fecha: 'Lunes 8 de septiembre',
 };
