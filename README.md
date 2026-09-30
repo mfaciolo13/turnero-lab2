@@ -1,4 +1,4 @@
-# Turnero San Rafael
+# Turnero Laboratorio 2
 
 Aplicacion movil de turnos para un centro medico, desarrollada con React Native, Expo y TypeScript.
 Corresponde al proyecto ABP de Laboratorio II: cada unidad de la materia suma
