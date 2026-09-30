@@ -4,10 +4,11 @@ import { Especialidad } from '../types';
 
 type Props = {
   especialidades: Especialidad[];
-  seleccionada: string;
+  seleccionada: string | null;
+  onSeleccionar: (id: string) => void;
 };
 
-const ListaEspecialidades = ({ especialidades, seleccionada }: Props) => (
+const ListaEspecialidades = ({ especialidades, seleccionada, onSeleccionar }: Props) => (
   <ScrollView
     horizontal
     showsHorizontalScrollIndicator={false}
@@ -19,6 +20,7 @@ const ListaEspecialidades = ({ especialidades, seleccionada }: Props) => (
         nombre={especialidad.nombre}
         disponibles={especialidad.disponibles}
         destacado={especialidad.id === seleccionada}
+        onPress={() => onSeleccionar(especialidad.id)}
       />
     ))}
   </ScrollView>

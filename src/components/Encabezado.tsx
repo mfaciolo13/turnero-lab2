@@ -1,5 +1,6 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
-import { colores } from '../theme/colores';
+import { colores, degradados } from '../theme/colores';
 
 type Props = {
   nombre: string;
@@ -9,7 +10,12 @@ type Props = {
 };
 
 const Encabezado = ({ nombre, sede, fecha, logo }: Props) => (
-  <View style={estilos.contenedor}>
+  <LinearGradient
+    colors={degradados.encabezado}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={estilos.contenedor}
+  >
     <View style={estilos.fila}>
       <Image style={estilos.logo} source={logo} />
       <View style={estilos.textos}>
@@ -20,12 +26,11 @@ const Encabezado = ({ nombre, sede, fecha, logo }: Props) => (
     <View style={estilos.fecha}>
       <Text style={estilos.fechaTexto}>{fecha}</Text>
     </View>
-  </View>
+  </LinearGradient>
 );
 
 const estilos = StyleSheet.create({
   contenedor: {
-    backgroundColor: colores.primarioOscuro,
     paddingHorizontal: 20,
     paddingBottom: 28,
     borderBottomLeftRadius: 24,
@@ -58,7 +63,7 @@ const estilos = StyleSheet.create({
   fecha: {
     marginTop: 18,
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255,255,255,0.14)',
+    backgroundColor: 'rgba(255,255,255,0.18)',
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 999,

@@ -1,19 +1,24 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colores } from '../theme/colores';
 
 type Props = {
   nombre: string;
   disponibles: number;
   destacado: boolean;
+  onPress: () => void;
 };
 
-const ChipEspecialidad = ({ nombre, disponibles, destacado }: Props) => (
-  <View style={[estilos.contenedor, destacado && estilos.destacado]}>
+const ChipEspecialidad = ({ nombre, disponibles, destacado, onPress }: Props) => (
+  <TouchableOpacity
+    style={[estilos.contenedor, destacado && estilos.destacado]}
+    onPress={onPress}
+    activeOpacity={0.7}
+  >
     <Text style={[estilos.nombre, destacado && estilos.nombreDestacado]}>{nombre}</Text>
     <View style={[estilos.globo, destacado && estilos.globoDestacado]}>
       <Text style={[estilos.cantidad, destacado && estilos.cantidadDestacada]}>{disponibles}</Text>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
 const estilos = StyleSheet.create({

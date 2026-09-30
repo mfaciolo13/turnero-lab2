@@ -13,6 +13,11 @@ export const colores = {
   ocupadoSuave: '#FBEEDC',
 };
 
+export const degradados = {
+  encabezado: ['#0A5B63', '#0E7C86', '#159AA3'] as const,
+  tarjeta: ['#FFFFFF', '#F4FAFA'] as const,
+};
+
 export const sombra = {
   shadowColor: '#0A5B63',
   shadowOpacity: 0.08,

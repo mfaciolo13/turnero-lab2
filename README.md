@@ -1,7 +1,8 @@
 # Turnero San Rafael
 
 Aplicacion movil de turnos para un centro medico, desarrollada con React Native, Expo y TypeScript.
-Corresponde a la Unidad I del proyecto ABP de Laboratorio II.
+Corresponde al proyecto ABP de Laboratorio II: cada unidad de la materia suma
+funcionalidad sobre la misma app.
 
 La pantalla principal muestra la agenda del dia: el resumen de turnos del centro, las
 especialidades con cupos disponibles y el listado de profesionales con sus horarios
@@ -57,20 +58,24 @@ src/
 
 ## Features
 
-| Feature | Estado |
-| --- | --- |
-| Pantalla principal con la agenda del dia | Terminado |
-| Componentes reutilizables comunicados por props | Terminado |
-| Datos estaticos del centro y los profesionales | Terminado |
-| Listado scrolleable de profesionales | Terminado |
-| Scroll horizontal de especialidades | Terminado |
-| Filtrar profesionales al tocar una especialidad | Pendiente |
-| Pantalla de detalle del profesional | Pendiente |
-| Reservar y cancelar un turno | Pendiente |
-| Navegacion entre pantallas | Pendiente |
-| Consumo de API para traer los turnos | Pendiente |
-| Persistencia de los turnos reservados | Pendiente |
+| Unidad | Feature | Estado |
+| --- | --- | --- |
+| I | Pantalla principal con la agenda del dia | Terminado |
+| I | Componentes reutilizables comunicados por props | Terminado |
+| I | Datos estaticos del centro y los profesionales | Terminado |
+| I | ScrollView vertical y horizontal | Terminado |
+| II | Gradiente en el encabezado con expo-linear-gradient | Terminado |
+| II | Tarjetas y chips tactiles con TouchableOpacity | Terminado |
+| II | Horarios con TouchableHighlight y estado ocupado | Terminado |
+| II | Filtrar profesionales tocando una especialidad | Terminado |
+| III | Navegacion con Expo Router: Tabs y Stack | Pendiente |
+| III | Detalle del profesional con ruta dinamica y parametros | Pendiente |
+| IV | Listados con FlatList y SectionList | Pendiente |
+| IV | Buscador con TextInput e iconos vectoriales | Pendiente |
+| IV | Paginacion con scroll infinito | Pendiente |
+| V | Consumo de API con Axios y TanStack Query | Pendiente |
+| V | Turnos reservados en un store de Zustand | Pendiente |
+| VI | Persistencia local de los turnos reservados | Pendiente |
 
-Las features pendientes dependen de contenidos que se ven en las proximas unidades
-(estado, navegacion, consumo de datos), por lo que se van a incorporar en las
-siguientes entregas.
+Las features pendientes dependen de contenidos que se ven en las proximas unidades,
+por lo que se van a incorporar en las siguientes entregas.

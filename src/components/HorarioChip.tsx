@@ -1,15 +1,22 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight } from 'react-native';
 import { colores } from '../theme/colores';
 
 type Props = {
   hora: string;
   ocupado: boolean;
+  onPress: () => void;
 };
 
-const HorarioChip = ({ hora, ocupado }: Props) => (
-  <View style={[estilos.contenedor, ocupado ? estilos.ocupado : estilos.libre]}>
+const HorarioChip = ({ hora, ocupado, onPress }: Props) => (
+  <TouchableHighlight
+    style={[estilos.contenedor, ocupado ? estilos.ocupado : estilos.libre]}
+    onPress={onPress}
+    disabled={ocupado}
+    underlayColor={colores.primarioSuave}
+    activeOpacity={0.8}
+  >
     <Text style={[estilos.hora, ocupado ? estilos.horaOcupada : estilos.horaLibre]}>{hora}</Text>
-  </View>
+  </TouchableHighlight>
 );
 
 const estilos = StyleSheet.create({

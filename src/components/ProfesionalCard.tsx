@@ -1,9 +1,12 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import HorarioChip from './HorarioChip';
 import { colores, sombra } from '../theme/colores';
 import { Profesional } from '../types';
 
-type Props = Omit<Profesional, 'id'>;
+type Props = Omit<Profesional, 'id'> & {
+  onPress: () => void;
+  onElegirHorario: (hora: string) => void;
+};
 
 const ProfesionalCard = ({
   nombre,
@@ -13,12 +16,14 @@ const ProfesionalCard = ({
   valoracion,
   cobertura,
   horarios,
+  onPress,
+  onElegirHorario,
 }: Props) => {
   const libres = horarios.filter((horario) => !horario.ocupado).length;
 
   return (
     <View style={estilos.tarjeta}>
-      <View style={estilos.cabecera}>
+      <TouchableOpacity style={estilos.cabecera} onPress={onPress} activeOpacity={0.7}>
         <Image style={estilos.foto} source={{ uri: foto }} />
         <View style={estilos.datos}>
           <Text style={estilos.nombre}>{nombre}</Text>
@@ -29,7 +34,7 @@ const ProfesionalCard = ({
             <Text style={estilos.puntaje}>{valoracion}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
       <Text style={estilos.cobertura}>{cobertura}</Text>
 
@@ -42,7 +47,12 @@ const ProfesionalCard = ({
 
       <View style={estilos.horarios}>
         {horarios.map((horario) => (
-          <HorarioChip key={horario.hora} hora={horario.hora} ocupado={horario.ocupado} />
+          <HorarioChip
+            key={horario.hora}
+            hora={horario.hora}
+            ocupado={horario.ocupado}
+            onPress={() => onElegirHorario(horario.hora)}
+          />
         ))}
       </View>
     </View>
