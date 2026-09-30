@@ -1,8 +1,10 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Alert, Image, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import HorarioChip from '../../src/components/HorarioChip';
+import { Alert, Image, Platform, SectionList, StyleSheet, Text, View } from 'react-native';
+import HorarioFila from '../../src/components/HorarioFila';
 import { profesionales } from '../../src/data/centro';
+import { agruparPorFranja } from '../../src/utils/franjas';
 import { colores, degradados, sombra } from '../../src/theme/colores';
 
 const avisar = (titulo: string, mensaje: string) => {
@@ -23,6 +25,7 @@ const DetalleProfesional = () => {
     return (
       <View style={estilos.vacio}>
         <Stack.Screen options={{ title: 'Profesional' }} />
+        <Ionicons name="alert-circle-outline" size={42} color={colores.textoSuave} />
         <Text style={estilos.vacioTexto}>No encontramos ese profesional.</Text>
         <Text style={estilos.volver} onPress={() => router.back()}>
           Volver a la agenda
@@ -31,57 +34,64 @@ const DetalleProfesional = () => {
     );
   }
 
+  const franjas = agruparPorFranja(profesional.horarios);
   const libres = profesional.horarios.filter((horario) => !horario.ocupado);
 
   return (
-    <ScrollView style={estilos.pantalla} contentContainerStyle={estilos.contenido}>
-      <Stack.Screen options={{ title: profesional.especialidad }} />
+    <SectionList
+      style={estilos.pantalla}
+      contentContainerStyle={estilos.contenido}
+      sections={franjas}
+      keyExtractor={(horario) => horario.hora}
+      stickySectionHeadersEnabled={false}
+      ListHeaderComponent={
+        <View>
+          <Stack.Screen options={{ title: profesional.especialidad }} />
 
-      <LinearGradient
-        colors={degradados.encabezado}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={estilos.cabecera}
-      >
-        <Image style={estilos.foto} source={{ uri: profesional.foto }} />
-        <Text style={estilos.nombre}>{profesional.nombre}</Text>
-        <Text style={estilos.especialidad}>{profesional.especialidad}</Text>
-        <View style={estilos.valoracion}>
-          <Text style={estilos.estrella}>★</Text>
-          <Text style={estilos.puntaje}>{profesional.valoracion}</Text>
+          <LinearGradient
+            colors={degradados.encabezado}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={estilos.cabecera}
+          >
+            <Image style={estilos.foto} source={{ uri: profesional.foto }} />
+            <Text style={estilos.nombre}>{profesional.nombre}</Text>
+            <Text style={estilos.especialidad}>{profesional.especialidad}</Text>
+            <View style={estilos.valoracion}>
+              <Ionicons name="star" size={13} color="#FFD166" />
+              <Text style={estilos.puntaje}>{profesional.valoracion}</Text>
+            </View>
+          </LinearGradient>
+
+          <View style={estilos.tarjeta}>
+            <View style={estilos.datoFila}>
+              <Ionicons name="location-outline" size={18} color={colores.primario} />
+              <Text style={estilos.dato}>{profesional.consultorio}</Text>
+            </View>
+            <View style={estilos.datoFila}>
+              <Ionicons name="card-outline" size={18} color={colores.primario} />
+              <Text style={estilos.dato}>{profesional.cobertura}</Text>
+            </View>
+            <View style={estilos.datoFila}>
+              <Ionicons name="calendar-outline" size={18} color={colores.primario} />
+              <Text style={estilos.dato}>
+                {libres.length} de {profesional.horarios.length} horarios disponibles
+              </Text>
+            </View>
+          </View>
         </View>
-      </LinearGradient>
-
-      <View style={estilos.tarjeta}>
-        <Text style={estilos.titulo}>Dónde atiende</Text>
-        <Text style={estilos.dato}>{profesional.consultorio}</Text>
-
-        <View style={estilos.separador} />
-
-        <Text style={estilos.titulo}>Coberturas</Text>
-        <Text style={estilos.dato}>{profesional.cobertura}</Text>
-      </View>
-
-      <View style={estilos.tarjeta}>
-        <Text style={estilos.titulo}>Turnos de hoy</Text>
-        <Text style={estilos.dato}>
-          {libres.length} de {profesional.horarios.length} horarios disponibles
-        </Text>
-
-        <View style={estilos.horarios}>
-          {profesional.horarios.map((horario) => (
-            <HorarioChip
-              key={horario.hora}
-              hora={horario.hora}
-              ocupado={horario.ocupado}
-              onPress={() =>
-                avisar('Turno seleccionado', `${profesional.nombre} a las ${horario.hora}`)
-              }
-            />
-          ))}
-        </View>
-      </View>
-    </ScrollView>
+      }
+      renderSectionHeader={({ section }) => (
+        <Text style={estilos.franja}>{section.titulo}</Text>
+      )}
+      renderItem={({ item }) => (
+        <HorarioFila
+          hora={item.hora}
+          ocupado={item.ocupado}
+          onPress={() => avisar('Turno seleccionado', `${profesional.nombre} a las ${item.hora}`)}
+        />
+      )}
+    />
   );
 };
 
@@ -125,10 +135,6 @@ const estilos = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 999,
   },
-  estrella: {
-    fontSize: 13,
-    color: '#FFD166',
-  },
   puntaje: {
     marginLeft: 5,
     fontSize: 13,
@@ -145,26 +151,25 @@ const estilos = StyleSheet.create({
     marginTop: 18,
     ...sombra,
   },
-  titulo: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colores.texto,
+  datoFila: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 6,
   },
   dato: {
-    marginTop: 5,
+    flex: 1,
+    marginLeft: 10,
     fontSize: 13,
-    color: colores.textoSuave,
+    color: colores.texto,
     lineHeight: 19,
   },
-  separador: {
-    height: 1,
-    backgroundColor: colores.borde,
-    marginVertical: 14,
-  },
-  horarios: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 2,
+  franja: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colores.texto,
+    marginHorizontal: 20,
+    marginTop: 22,
+    marginBottom: 10,
   },
   vacio: {
     flex: 1,
@@ -174,6 +179,7 @@ const estilos = StyleSheet.create({
     padding: 24,
   },
   vacioTexto: {
+    marginTop: 10,
     fontSize: 15,
     color: colores.texto,
   },

@@ -1,5 +1,7 @@
 import { Link } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Aviso from '../../src/components/Aviso';
 import { centro, indicadores } from '../../src/data/centro';
 import ResumenDelDia from '../../src/components/ResumenDelDia';
@@ -9,7 +11,7 @@ const mapa = 'https://maps.google.com/?q=Av.+Colon+1240+Cordoba';
 const telefono = 'tel:+543514567890';
 
 const Info = () => (
-  <View style={estilos.pantalla}>
+  <SafeAreaView style={estilos.pantalla} edges={['bottom']}>
     <ScrollView contentContainerStyle={estilos.contenido}>
       <View style={estilos.tarjeta}>
         <Text style={estilos.nombre}>{centro.nombre}</Text>
@@ -22,6 +24,7 @@ const Info = () => (
             onPress={() => Linking.openURL(mapa)}
             activeOpacity={0.8}
           >
+            <Ionicons name="navigate" size={16} color={colores.superficie} />
             <Text style={estilos.botonTexto}>Cómo llegar</Text>
           </TouchableOpacity>
 
@@ -30,6 +33,7 @@ const Info = () => (
             onPress={() => Linking.openURL(telefono)}
             activeOpacity={0.8}
           >
+            <Ionicons name="call" size={16} color={colores.primarioOscuro} />
             <Text style={[estilos.botonTexto, estilos.botonTextoSecundario]}>Llamar</Text>
           </TouchableOpacity>
         </View>
@@ -46,7 +50,7 @@ const Info = () => (
         Ver todas las especialidades
       </Link>
     </ScrollView>
-  </View>
+  </SafeAreaView>
 );
 
 const estilos = StyleSheet.create({
@@ -89,10 +93,12 @@ const estilos = StyleSheet.create({
   },
   boton: {
     flex: 1,
+    flexDirection: 'row',
     backgroundColor: colores.primario,
     borderRadius: 12,
     paddingVertical: 11,
     alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 10,
   },
   botonSecundario: {
@@ -100,6 +106,7 @@ const estilos = StyleSheet.create({
     marginRight: 0,
   },
   botonTexto: {
+    marginLeft: 8,
     color: colores.superficie,
     fontWeight: '700',
     fontSize: 14,

@@ -44,6 +44,7 @@ src/
   components/             componentes reutilizables
   data/                   datos estaticos del centro
   theme/                  colores, degradados y sombras
+  utils/                  agrupado de horarios por franja
   types.ts                tipos del dominio
 ```
 
@@ -58,7 +59,9 @@ src/
 | `ChipEspecialidad` | nombre, disponibles, destacado, onPress | Chip tactil con el cupo de una especialidad |
 | `EspecialidadItem` | nombre, profesionales, disponibles, onPress | Fila de la pantalla de especialidades |
 | `ProfesionalCard` | nombre, especialidad, consultorio, foto, valoracion, cobertura, horarios, onPress, onElegirHorario | Tarjeta del profesional con foto y turnos |
-| `HorarioChip` | hora, ocupado, onPress | Horario libre u ocupado |
+| `HorarioChip` | hora, ocupado, onPress | Horario libre u ocupado dentro de la tarjeta |
+| `HorarioFila` | hora, ocupado, onPress | Fila de horario con boton de reserva |
+| `Buscador` | valor, onCambiar, placeholder | TextInput con icono y boton para limpiar |
 | `Seccion` | titulo, detalle, children | Titulo de seccion reutilizable |
 | `Aviso` | titulo, mensaje | Recordatorio para el paciente |
 
@@ -78,8 +81,11 @@ src/
 | III | Abrir el mapa y el telefono del centro con Linking | Terminado |
 | III | Navegacion con Expo Router: Tabs y Stack | Terminado |
 | III | Detalle del profesional con ruta dinamica y parametros | Terminado |
-| IV | Listados con FlatList y SectionList | Pendiente |
-| IV | Buscador con TextInput e iconos vectoriales | Pendiente |
+| IV | Agenda y especialidades con FlatList | Terminado |
+| IV | Horarios del profesional agrupados por franja con SectionList | Terminado |
+| IV | Buscador con TextInput por nombre o especialidad | Terminado |
+| IV | Iconos con @expo/vector-icons en tabs, tarjetas y botones | Terminado |
+| IV | SafeAreaView y margenes seguros en todas las pantallas | Terminado |
 | IV | Paginacion con scroll infinito | Pendiente |
 | V | Consumo de API con Axios y TanStack Query | Pendiente |
 | V | Turnos reservados en un store de Zustand | Pendiente |

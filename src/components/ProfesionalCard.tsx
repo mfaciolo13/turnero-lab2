@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import HorarioChip from './HorarioChip';
 import { colores, sombra } from '../theme/colores';
@@ -28,9 +29,12 @@ const ProfesionalCard = ({
         <View style={estilos.datos}>
           <Text style={estilos.nombre}>{nombre}</Text>
           <Text style={estilos.especialidad}>{especialidad}</Text>
-          <Text style={estilos.consultorio}>{consultorio}</Text>
+          <View style={estilos.consultorio}>
+            <Ionicons name="location-outline" size={13} color={colores.textoSuave} />
+            <Text style={estilos.consultorioTexto}>{consultorio}</Text>
+          </View>
           <View style={estilos.valoracion}>
-            <Text style={estilos.estrella}>★</Text>
+            <Ionicons name="star" size={13} color="#E0A106" />
             <Text style={estilos.puntaje}>{valoracion}</Text>
           </View>
         </View>
@@ -95,18 +99,19 @@ const estilos = StyleSheet.create({
     marginTop: 2,
   },
   consultorio: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  consultorioTexto: {
+    marginLeft: 4,
     fontSize: 12,
     color: colores.textoSuave,
-    marginTop: 4,
   },
   valoracion: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 6,
-  },
-  estrella: {
-    fontSize: 13,
-    color: '#E0A106',
   },
   puntaje: {
     marginLeft: 4,

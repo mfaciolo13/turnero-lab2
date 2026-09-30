@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import EspecialidadItem from '../../src/components/EspecialidadItem';
 import { especialidades, profesionales } from '../../src/data/centro';
 import { colores } from '../../src/theme/colores';
@@ -11,30 +12,30 @@ const Especialidades = () => {
     router.navigate({ pathname: '/', params: { especialidad: id } });
   };
 
+  const contarProfesionales = (nombre: string) =>
+    profesionales.filter((profesional) => profesional.especialidad === nombre).length;
+
   return (
-    <View style={estilos.pantalla}>
-      <ScrollView contentContainerStyle={estilos.contenido}>
-        <Text style={estilos.bajada}>
-          Elegí una especialidad y te llevamos a la agenda del día filtrada.
-        </Text>
-
-        {especialidades.map((especialidad) => {
-          const delArea = profesionales.filter(
-            (profesional) => profesional.especialidad === especialidad.nombre,
-          );
-
-          return (
-            <EspecialidadItem
-              key={especialidad.id}
-              nombre={especialidad.nombre}
-              profesionales={delArea.length}
-              disponibles={especialidad.disponibles}
-              onPress={() => verAgenda(especialidad.id)}
-            />
-          );
-        })}
-      </ScrollView>
-    </View>
+    <SafeAreaView style={estilos.pantalla} edges={['bottom']}>
+      <FlatList
+        data={especialidades}
+        keyExtractor={(especialidad) => especialidad.id}
+        contentContainerStyle={estilos.contenido}
+        ListHeaderComponent={
+          <Text style={estilos.bajada}>
+            Elegí una especialidad y te llevamos a la agenda del día filtrada.
+          </Text>
+        }
+        renderItem={({ item }) => (
+          <EspecialidadItem
+            nombre={item.nombre}
+            profesionales={contarProfesionales(item.nombre)}
+            disponibles={item.disponibles}
+            onPress={() => verAgenda(item.id)}
+          />
+        )}
+      />
+    </SafeAreaView>
   );
 };
 

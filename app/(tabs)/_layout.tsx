@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { colores } from '../../src/theme/colores';
 
 const TabsLayout = () => (
@@ -12,9 +13,28 @@ const TabsLayout = () => (
       tabBarStyle: { backgroundColor: colores.superficie, borderTopColor: colores.borde },
     }}
   >
-    <Tabs.Screen name="index" options={{ title: 'Agenda', headerShown: false }} />
-    <Tabs.Screen name="especialidades" options={{ title: 'Especialidades' }} />
-    <Tabs.Screen name="info" options={{ title: 'El centro' }} />
+    <Tabs.Screen
+      name="index"
+      options={{
+        title: 'Agenda',
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => <Ionicons name="calendar" size={size} color={color} />,
+      }}
+    />
+    <Tabs.Screen
+      name="especialidades"
+      options={{
+        title: 'Especialidades',
+        tabBarIcon: ({ color, size }) => <Ionicons name="medkit" size={size} color={color} />,
+      }}
+    />
+    <Tabs.Screen
+      name="info"
+      options={{
+        title: 'El centro',
+        tabBarIcon: ({ color, size }) => <Ionicons name="business" size={size} color={color} />,
+      }}
+    />
   </Tabs>
 );
 

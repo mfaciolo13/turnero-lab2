@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colores, sombra } from '../theme/colores';
 
@@ -19,7 +20,7 @@ const EspecialidadItem = ({ nombre, profesionales, disponibles, onPress }: Props
         {profesionales} profesional{profesionales === 1 ? '' : 'es'} · {disponibles} turnos libres
       </Text>
     </View>
-    <Text style={estilos.flecha}>›</Text>
+    <Ionicons name="chevron-forward" size={20} color={colores.textoSuave} />
   </TouchableOpacity>
 );
 
@@ -62,11 +63,6 @@ const estilos = StyleSheet.create({
     fontSize: 12,
     color: colores.textoSuave,
     marginTop: 3,
-  },
-  flecha: {
-    fontSize: 26,
-    color: colores.textoSuave,
-    marginLeft: 8,
   },
 });
 
