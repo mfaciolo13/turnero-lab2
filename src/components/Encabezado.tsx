@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colores, degradados } from '../theme/colores';
 
 type Props = {
@@ -9,25 +10,29 @@ type Props = {
   logo: ImageSourcePropType;
 };
 
-const Encabezado = ({ nombre, sede, fecha, logo }: Props) => (
-  <LinearGradient
-    colors={degradados.encabezado}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 1 }}
-    style={estilos.contenedor}
-  >
-    <View style={estilos.fila}>
-      <Image style={estilos.logo} source={logo} />
-      <View style={estilos.textos}>
-        <Text style={estilos.nombre}>{nombre}</Text>
-        <Text style={estilos.sede}>{sede}</Text>
+const Encabezado = ({ nombre, sede, fecha, logo }: Props) => {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <LinearGradient
+      colors={degradados.encabezado}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={[estilos.contenedor, { paddingTop: insets.top + 16 }]}
+    >
+      <View style={estilos.fila}>
+        <Image style={estilos.logo} source={logo} />
+        <View style={estilos.textos}>
+          <Text style={estilos.nombre}>{nombre}</Text>
+          <Text style={estilos.sede}>{sede}</Text>
+        </View>
       </View>
-    </View>
-    <View style={estilos.fecha}>
-      <Text style={estilos.fechaTexto}>{fecha}</Text>
-    </View>
-  </LinearGradient>
-);
+      <View style={estilos.fecha}>
+        <Text style={estilos.fechaTexto}>{fecha}</Text>
+      </View>
+    </LinearGradient>
+  );
+};
 
 const estilos = StyleSheet.create({
   contenedor: {

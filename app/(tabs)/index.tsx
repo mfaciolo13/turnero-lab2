@@ -1,29 +1,32 @@
-import { useState } from 'react';
-import { Alert, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Encabezado from '../components/Encabezado';
-import ResumenDelDia from '../components/ResumenDelDia';
-import ListaEspecialidades from '../components/ListaEspecialidades';
-import ProfesionalCard from '../components/ProfesionalCard';
-import Seccion from '../components/Seccion';
-import Aviso from '../components/Aviso';
-import { centro, especialidades, indicadores, profesionales } from '../data/centro';
-import { colores } from '../theme/colores';
+import { useEffect, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Encabezado from '../../src/components/Encabezado';
+import ResumenDelDia from '../../src/components/ResumenDelDia';
+import ListaEspecialidades from '../../src/components/ListaEspecialidades';
+import ProfesionalCard from '../../src/components/ProfesionalCard';
+import Seccion from '../../src/components/Seccion';
+import Aviso from '../../src/components/Aviso';
+import { centro, especialidades, indicadores, profesionales } from '../../src/data/centro';
+import { colores } from '../../src/theme/colores';
 
-const espacioSuperior = Platform.select({ android: 38, ios: 58, default: 30 });
-
-const avisar = (titulo: string, mensaje: string) => {
-  if (Platform.OS === 'web') {
-    window.alert(`${titulo}\n\n${mensaje}`);
-    return;
-  }
-  Alert.alert(titulo, mensaje);
-};
-
-const PantallaTurnos = () => {
+const Agenda = () => {
+  const router = useRouter();
+  const { especialidad } = useLocalSearchParams<{ especialidad?: string }>();
   const [seleccionada, setSeleccionada] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (especialidad) {
+      setSeleccionada(especialidad);
+    }
+  }, [especialidad]);
 
   const elegirEspecialidad = (id: string) => {
     setSeleccionada((actual) => (actual === id ? null : id));
+  };
+
+  const abrirProfesional = (id: number) => {
+    router.push({ pathname: '/profesional/[id]', params: { id } });
   };
 
   const nombreSeleccionada = especialidades.find((item) => item.id === seleccionada)?.nombre;
@@ -35,16 +38,14 @@ const PantallaTurnos = () => {
   return (
     <View style={estilos.pantalla}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ paddingTop: espacioSuperior }}>
-          <Encabezado
-            nombre={centro.nombre}
-            sede={centro.sede}
-            fecha={centro.fecha}
-            logo={require('../../assets/icon.png')}
-          />
-        </View>
+        <Encabezado
+          nombre={centro.nombre}
+          sede={centro.sede}
+          fecha={centro.fecha}
+          logo={require('../../assets/icon.png')}
+        />
 
-        <ResumenDelDia indicadores={indicadores} />
+        <ResumenDelDia indicadores={indicadores} superpuesto />
 
         <Seccion titulo="Especialidades" detalle="Tocá para filtrar">
           <ListaEspecialidades
@@ -65,10 +66,8 @@ const PantallaTurnos = () => {
               valoracion={profesional.valoracion}
               cobertura={profesional.cobertura}
               horarios={profesional.horarios}
-              onPress={() => avisar(profesional.nombre, profesional.consultorio)}
-              onElegirHorario={(hora) =>
-                avisar('Turno elegido', `${profesional.nombre} a las ${hora}`)
-              }
+              onPress={() => abrirProfesional(profesional.id)}
+              onElegirHorario={() => abrirProfesional(profesional.id)}
             />
           ))}
 
@@ -98,4 +97,4 @@ const estilos = StyleSheet.create({
   },
 });
 
-export default PantallaTurnos;
+export default Agenda;

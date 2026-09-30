@@ -33,26 +33,32 @@ npx tsc --noEmit
 ## Estructura
 
 ```
-App.tsx
+app/
+  _layout.tsx             stack raiz y tema de los headers
+  (tabs)/_layout.tsx      navegacion por tabs
+  (tabs)/index.tsx        agenda del dia
+  (tabs)/especialidades.tsx
+  (tabs)/info.tsx         datos del centro
+  profesional/[id].tsx    detalle con ruta dinamica
 src/
-  components/     componentes reutilizables
-  data/           datos estaticos del centro
-  screens/        pantalla principal
-  theme/          colores y sombras
-  types.ts        tipos del dominio
+  components/             componentes reutilizables
+  data/                   datos estaticos del centro
+  theme/                  colores, degradados y sombras
+  types.ts                tipos del dominio
 ```
 
 ## Componentes
 
 | Componente | Props | Descripcion |
 | --- | --- | --- |
-| `Encabezado` | nombre, sede, fecha, logo | Cabecera con el logo y la fecha de la agenda |
-| `ResumenDelDia` | indicadores | Tarjeta con los totales del dia |
+| `Encabezado` | nombre, sede, fecha, logo | Cabecera con degradado, logo y fecha |
+| `ResumenDelDia` | indicadores, superpuesto | Tarjeta con los totales del dia |
 | `Indicador` | valor, etiqueta, tono | Numero suelto dentro del resumen |
-| `ListaEspecialidades` | especialidades, seleccionada | ScrollView horizontal de especialidades |
-| `ChipEspecialidad` | nombre, disponibles, destacado | Chip con el cupo de una especialidad |
-| `ProfesionalCard` | nombre, especialidad, consultorio, foto, valoracion, cobertura, horarios | Tarjeta del profesional con foto y turnos |
-| `HorarioChip` | hora, ocupado | Horario libre u ocupado |
+| `ListaEspecialidades` | especialidades, seleccionada, onSeleccionar | ScrollView horizontal de especialidades |
+| `ChipEspecialidad` | nombre, disponibles, destacado, onPress | Chip tactil con el cupo de una especialidad |
+| `EspecialidadItem` | nombre, profesionales, disponibles, onPress | Fila de la pantalla de especialidades |
+| `ProfesionalCard` | nombre, especialidad, consultorio, foto, valoracion, cobertura, horarios, onPress, onElegirHorario | Tarjeta del profesional con foto y turnos |
+| `HorarioChip` | hora, ocupado, onPress | Horario libre u ocupado |
 | `Seccion` | titulo, detalle, children | Titulo de seccion reutilizable |
 | `Aviso` | titulo, mensaje | Recordatorio para el paciente |
 
@@ -68,8 +74,10 @@ src/
 | II | Tarjetas y chips tactiles con TouchableOpacity | Terminado |
 | II | Horarios con TouchableHighlight y estado ocupado | Terminado |
 | II | Filtrar profesionales tocando una especialidad | Terminado |
-| III | Navegacion con Expo Router: Tabs y Stack | Pendiente |
-| III | Detalle del profesional con ruta dinamica y parametros | Pendiente |
+| III | Ir de una especialidad a la agenda filtrada por parametro | Terminado |
+| III | Abrir el mapa y el telefono del centro con Linking | Terminado |
+| III | Navegacion con Expo Router: Tabs y Stack | Terminado |
+| III | Detalle del profesional con ruta dinamica y parametros | Terminado |
 | IV | Listados con FlatList y SectionList | Pendiente |
 | IV | Buscador con TextInput e iconos vectoriales | Pendiente |
 | IV | Paginacion con scroll infinito | Pendiente |

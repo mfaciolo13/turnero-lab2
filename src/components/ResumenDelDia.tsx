@@ -5,10 +5,11 @@ import { Metrica } from '../types';
 
 type Props = {
   indicadores: Metrica[];
+  superpuesto?: boolean;
 };
 
-const ResumenDelDia = ({ indicadores }: Props) => (
-  <View style={estilos.contenedor}>
+const ResumenDelDia = ({ indicadores, superpuesto }: Props) => (
+  <View style={[estilos.contenedor, superpuesto && estilos.superpuesto]}>
     {indicadores.map((indicador) => (
       <Indicador
         key={indicador.id}
@@ -25,11 +26,13 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colores.superficie,
     marginHorizontal: 20,
-    marginTop: -22,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: colores.borde,
     ...sombra,
+  },
+  superpuesto: {
+    marginTop: -22,
   },
 });
 
