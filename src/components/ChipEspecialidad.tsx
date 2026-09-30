@@ -3,7 +3,7 @@ import { colores } from '../theme/colores';
 
 type Props = {
   nombre: string;
-  disponibles: number;
+  disponibles?: number;
   destacado: boolean;
   onPress: () => void;
 };
@@ -15,9 +15,11 @@ const ChipEspecialidad = ({ nombre, disponibles, destacado, onPress }: Props) =>
     activeOpacity={0.7}
   >
     <Text style={[estilos.nombre, destacado && estilos.nombreDestacado]}>{nombre}</Text>
-    <View style={[estilos.globo, destacado && estilos.globoDestacado]}>
-      <Text style={[estilos.cantidad, destacado && estilos.cantidadDestacada]}>{disponibles}</Text>
-    </View>
+    {disponibles === undefined ? null : (
+      <View style={[estilos.globo, destacado && estilos.globoDestacado]}>
+        <Text style={[estilos.cantidad, destacado && estilos.cantidadDestacada]}>{disponibles}</Text>
+      </View>
+    )}
   </TouchableOpacity>
 );
 
@@ -30,8 +32,7 @@ const estilos = StyleSheet.create({
     borderColor: colores.borde,
     borderRadius: 999,
     paddingVertical: 9,
-    paddingLeft: 16,
-    paddingRight: 9,
+    paddingHorizontal: 14,
     marginRight: 10,
   },
   destacado: {
@@ -48,6 +49,7 @@ const estilos = StyleSheet.create({
   },
   globo: {
     marginLeft: 8,
+    marginRight: -5,
     minWidth: 24,
     height: 24,
     borderRadius: 12,

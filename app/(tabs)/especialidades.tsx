@@ -2,25 +2,26 @@ import { useRouter } from 'expo-router';
 import { FlatList, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EspecialidadItem from '../../src/components/EspecialidadItem';
-import { especialidades, profesionales } from '../../src/data/centro';
+import Estado from '../../src/components/Estado';
+import { useResumenEspecialidades } from '../../src/hooks/useProfesionales';
 import { colores } from '../../src/theme/colores';
 
 const Especialidades = () => {
   const router = useRouter();
+  const { data, isLoading, isError, refetch, isRefetching } = useResumenEspecialidades();
 
   const verAgenda = (id: string) => {
     router.navigate({ pathname: '/', params: { especialidad: id } });
   };
 
-  const contarProfesionales = (nombre: string) =>
-    profesionales.filter((profesional) => profesional.especialidad === nombre).length;
-
   return (
     <SafeAreaView style={estilos.pantalla} edges={['bottom']}>
       <FlatList
-        data={especialidades}
+        data={data ?? []}
         keyExtractor={(especialidad) => especialidad.id}
         contentContainerStyle={estilos.contenido}
+        refreshing={isRefetching}
+        onRefresh={refetch}
         ListHeaderComponent={
           <Text style={estilos.bajada}>
             Elegí una especialidad y te llevamos a la agenda del día filtrada.
@@ -29,11 +30,22 @@ const Especialidades = () => {
         renderItem={({ item }) => (
           <EspecialidadItem
             nombre={item.nombre}
-            profesionales={contarProfesionales(item.nombre)}
+            profesionales={item.profesionales}
             disponibles={item.disponibles}
             onPress={() => verAgenda(item.id)}
           />
         )}
+        ListEmptyComponent={
+          isLoading ? (
+            <Estado tipo="cargando" mensaje="Contando turnos disponibles..." />
+          ) : isError ? (
+            <Estado
+              tipo="error"
+              mensaje="No pudimos traer las especialidades."
+              onReintentar={refetch}
+            />
+          ) : null
+        }
       />
     </SafeAreaView>
   );

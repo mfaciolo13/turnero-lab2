@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import Encabezado from '../../src/components/Encabezado';
 import ResumenDelDia from '../../src/components/ResumenDelDia';
 import ListaEspecialidades from '../../src/components/ListaEspecialidades';
 import ProfesionalCard from '../../src/components/ProfesionalCard';
 import Buscador from '../../src/components/Buscador';
 import Seccion from '../../src/components/Seccion';
+import Estado from '../../src/components/Estado';
 import Aviso from '../../src/components/Aviso';
-import { centro, especialidades, indicadores, profesionales } from '../../src/data/centro';
+import { useProfesionales, useResumenEspecialidades } from '../../src/hooks/useProfesionales';
+import { useIndicadores } from '../../src/hooks/useIndicadores';
+import { useDemora } from '../../src/hooks/useDemora';
+import { useTurnosStore } from '../../src/store/turnos';
+import { centro, especialidades } from '../../src/data/centro';
 import { colores } from '../../src/theme/colores';
 
 const Agenda = () => {
@@ -16,6 +21,21 @@ const Agenda = () => {
   const { especialidad } = useLocalSearchParams<{ especialidad?: string }>();
   const [seleccionada, setSeleccionada] = useState<string | null>(null);
   const [busqueda, setBusqueda] = useState('');
+  const busquedaDemorada = useDemora(busqueda.trim());
+
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useProfesionales(busquedaDemorada);
+  const resumen = useResumenEspecialidades();
+  const indicadores = useIndicadores();
+  const reservas = useTurnosStore((state) => state.reservas);
 
   useEffect(() => {
     if (especialidad) {
@@ -31,19 +51,36 @@ const Agenda = () => {
     router.push({ pathname: '/profesional/[id]', params: { id } });
   };
 
-  const nombreSeleccionada = especialidades.find((item) => item.id === seleccionada)?.nombre;
-  const texto = busqueda.trim().toLowerCase();
+  const cargarMas = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
-  const listado = profesionales
-    .filter((profesional) =>
-      nombreSeleccionada ? profesional.especialidad === nombreSeleccionada : true,
-    )
-    .filter((profesional) =>
-      texto.length === 0
-        ? true
-        : profesional.nombre.toLowerCase().includes(texto) ||
-          profesional.especialidad.toLowerCase().includes(texto),
-    );
+  const nombreSeleccionada = especialidades.find((item) => item.id === seleccionada)?.nombre;
+  const todos = data?.pages.flatMap((pagina) => pagina.profesionales) ?? [];
+  const listado = nombreSeleccionada
+    ? todos.filter((profesional) => profesional.especialidad === nombreSeleccionada)
+    : todos;
+
+  const esMio = (profesionalId: number, hora: string) =>
+    reservas.some((reserva) => reserva.profesionalId === profesionalId && reserva.hora === hora);
+
+  const renderVacio = () => {
+    if (isLoading) {
+      return <Estado tipo="cargando" mensaje="Buscando profesionales..." />;
+    }
+    if (isError) {
+      return (
+        <Estado
+          tipo="error"
+          mensaje="No pudimos traer la agenda. Revisá tu conexión."
+          onReintentar={refetch}
+        />
+      );
+    }
+    return <Estado tipo="vacio" mensaje="No hay profesionales para esa búsqueda." />;
+  };
 
   return (
     <View style={estilos.pantalla}>
@@ -51,6 +88,10 @@ const Agenda = () => {
         data={listado}
         keyExtractor={(profesional) => String(profesional.id)}
         showsVerticalScrollIndicator={false}
+        onEndReached={cargarMas}
+        onEndReachedThreshold={0.4}
+        refreshing={isRefetching && !isFetchingNextPage}
+        onRefresh={refetch}
         ListHeaderComponent={
           <View>
             <Encabezado
@@ -64,17 +105,17 @@ const Agenda = () => {
 
             <Seccion titulo="Especialidades" detalle="Tocá para filtrar">
               <ListaEspecialidades
-                especialidades={especialidades}
+                especialidades={resumen.data ?? especialidades}
                 seleccionada={seleccionada}
                 onSeleccionar={elegirEspecialidad}
               />
             </Seccion>
 
-            <Seccion titulo="Profesionales" detalle={`${listado.length} en agenda`}>
+            <Seccion titulo="Profesionales" detalle={`${listado.length} cargados`}>
               <Buscador
                 valor={busqueda}
                 onCambiar={setBusqueda}
-                placeholder="Buscar por nombre o especialidad"
+                placeholder="Buscar por nombre o apellido"
               />
               <View style={estilos.espacio} />
             </Seccion>
@@ -88,19 +129,24 @@ const Agenda = () => {
             foto={item.foto}
             valoracion={item.valoracion}
             cobertura={item.cobertura}
-            horarios={item.horarios}
+            horarios={item.horarios.map((horario) => ({
+              ...horario,
+              ocupado: horario.ocupado || esMio(item.id, horario.hora),
+            }))}
             onPress={() => abrirProfesional(item.id)}
             onElegirHorario={() => abrirProfesional(item.id)}
           />
         )}
-        ListEmptyComponent={
-          <Text style={estilos.vacio}>No hay profesionales para esa búsqueda.</Text>
-        }
+        ListEmptyComponent={renderVacio}
         ListFooterComponent={
-          <Aviso
-            titulo="Antes de venir"
-            mensaje="Presentate 15 minutos antes con DNI y credencial de la obra social. Los turnos se liberan pasados 10 minutos de la hora asignada."
-          />
+          isFetchingNextPage ? (
+            <ActivityIndicator style={estilos.cargandoMas} color={colores.primario} />
+          ) : !hasNextPage && todos.length > 0 ? (
+            <Aviso
+              titulo="Antes de venir"
+              mensaje="Presentate 15 minutos antes con DNI y credencial de la obra social. Los turnos se liberan pasados 10 minutos de la hora asignada."
+            />
+          ) : null
         }
       />
     </View>
@@ -115,10 +161,8 @@ const estilos = StyleSheet.create({
   espacio: {
     height: 14,
   },
-  vacio: {
-    marginHorizontal: 20,
-    fontSize: 13,
-    color: colores.textoSuave,
+  cargandoMas: {
+    marginVertical: 20,
   },
 });
 

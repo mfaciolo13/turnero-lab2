@@ -19,9 +19,5 @@ export const degradados = {
 };
 
 export const sombra = {
-  shadowColor: '#0A5B63',
-  shadowOpacity: 0.08,
-  shadowRadius: 12,
-  shadowOffset: { width: 0, height: 4 },
-  elevation: 2,
+  boxShadow: '0px 4px 12px rgba(10, 91, 99, 0.08)',
 };

@@ -3,55 +3,62 @@ import { Ionicons } from '@expo/vector-icons';
 import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Aviso from '../../src/components/Aviso';
-import { centro, indicadores } from '../../src/data/centro';
 import ResumenDelDia from '../../src/components/ResumenDelDia';
+import { useIndicadores } from '../../src/hooks/useIndicadores';
+import { centro } from '../../src/data/centro';
 import { colores, sombra } from '../../src/theme/colores';
 
 const mapa = 'https://maps.google.com/?q=Av.+Colon+1240+Cordoba';
 const telefono = 'tel:+543514567890';
 
-const Info = () => (
-  <SafeAreaView style={estilos.pantalla} edges={['bottom']}>
-    <ScrollView contentContainerStyle={estilos.contenido}>
-      <View style={estilos.tarjeta}>
-        <Text style={estilos.nombre}>{centro.nombre}</Text>
-        <Text style={estilos.sede}>{centro.sede}</Text>
-        <Text style={estilos.horario}>Lunes a viernes de 08:00 a 20:00 · Sábados de 09:00 a 13:00</Text>
+const Info = () => {
+  const indicadores = useIndicadores();
 
-        <View style={estilos.acciones}>
-          <TouchableOpacity
-            style={estilos.boton}
-            onPress={() => Linking.openURL(mapa)}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="navigate" size={16} color={colores.superficie} />
-            <Text style={estilos.botonTexto}>Cómo llegar</Text>
-          </TouchableOpacity>
+  return (
+    <SafeAreaView style={estilos.pantalla} edges={['bottom']}>
+      <ScrollView contentContainerStyle={estilos.contenido}>
+        <View style={estilos.tarjeta}>
+          <Text style={estilos.nombre}>{centro.nombre}</Text>
+          <Text style={estilos.sede}>{centro.sede}</Text>
+          <Text style={estilos.horario}>
+            Lunes a viernes de 08:00 a 20:00 · Sábados de 09:00 a 13:00
+          </Text>
 
-          <TouchableOpacity
-            style={[estilos.boton, estilos.botonSecundario]}
-            onPress={() => Linking.openURL(telefono)}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="call" size={16} color={colores.primarioOscuro} />
-            <Text style={[estilos.botonTexto, estilos.botonTextoSecundario]}>Llamar</Text>
-          </TouchableOpacity>
+          <View style={estilos.acciones}>
+            <TouchableOpacity
+              style={estilos.boton}
+              onPress={() => Linking.openURL(mapa)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="navigate" size={16} color={colores.superficie} />
+              <Text style={estilos.botonTexto}>Cómo llegar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[estilos.boton, estilos.botonSecundario]}
+              onPress={() => Linking.openURL(telefono)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="call" size={16} color={colores.primarioOscuro} />
+              <Text style={[estilos.botonTexto, estilos.botonTextoSecundario]}>Llamar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
 
-      <ResumenDelDia indicadores={indicadores} />
+        <ResumenDelDia indicadores={indicadores} />
 
-      <Aviso
-        titulo="Cancelaciones"
-        mensaje="Podés cancelar hasta 2 horas antes del turno sin costo. Pasado ese plazo el turno se considera ausente."
-      />
+        <Aviso
+          titulo="Cancelaciones"
+          mensaje="Podés cancelar hasta 2 horas antes del turno sin costo. Pasado ese plazo el turno se considera ausente."
+        />
 
-      <Link href="/especialidades" style={estilos.link}>
-        Ver todas las especialidades
-      </Link>
-    </ScrollView>
-  </SafeAreaView>
-);
+        <Link href="/especialidades" style={estilos.link}>
+          Ver todas las especialidades
+        </Link>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const estilos = StyleSheet.create({
   pantalla: {

@@ -1,32 +1,41 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Alert, Image, Platform, SectionList, StyleSheet, Text, View } from 'react-native';
+import { Image, Linking, SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import HorarioFila from '../../src/components/HorarioFila';
-import { profesionales } from '../../src/data/centro';
+import Estado from '../../src/components/Estado';
+import { useProfesional } from '../../src/hooks/useProfesionales';
+import { useTurnosStore } from '../../src/store/turnos';
 import { agruparPorFranja } from '../../src/utils/franjas';
+import { avisar, confirmar } from '../../src/utils/dialogos';
 import { colores, degradados, sombra } from '../../src/theme/colores';
-
-const avisar = (titulo: string, mensaje: string) => {
-  if (Platform.OS === 'web') {
-    window.alert(`${titulo}\n\n${mensaje}`);
-    return;
-  }
-  Alert.alert(titulo, mensaje);
-};
 
 const DetalleProfesional = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { data: profesional, isLoading, isError, refetch } = useProfesional(Number(id));
 
-  const profesional = profesionales.find((item) => item.id === Number(id));
+  const reservas = useTurnosStore((state) => state.reservas);
+  const reservar = useTurnosStore((state) => state.reservar);
+  const cancelar = useTurnosStore((state) => state.cancelar);
 
-  if (!profesional) {
+  if (isLoading) {
     return (
-      <View style={estilos.vacio}>
+      <View style={estilos.centrado}>
+        <Estado tipo="cargando" mensaje="Cargando la agenda del profesional..." />
+      </View>
+    );
+  }
+
+  if (isError || !profesional) {
+    return (
+      <View style={estilos.centrado}>
         <Stack.Screen options={{ title: 'Profesional' }} />
-        <Ionicons name="alert-circle-outline" size={42} color={colores.textoSuave} />
-        <Text style={estilos.vacioTexto}>No encontramos ese profesional.</Text>
+        <Estado
+          tipo="error"
+          mensaje="No pudimos cargar este profesional."
+          onReintentar={refetch}
+        />
         <Text style={estilos.volver} onPress={() => router.back()}>
           Volver a la agenda
         </Text>
@@ -34,8 +43,30 @@ const DetalleProfesional = () => {
     );
   }
 
+  const idReserva = (hora: string) => `${profesional.id}-${hora}`;
+  const esMio = (hora: string) => reservas.some((reserva) => reserva.id === idReserva(hora));
+
   const franjas = agruparPorFranja(profesional.horarios);
-  const libres = profesional.horarios.filter((horario) => !horario.ocupado);
+  const libres = profesional.horarios.filter(
+    (horario) => !horario.ocupado && !esMio(horario.hora),
+  );
+
+  const pedirTurno = (hora: string) => {
+    confirmar(
+      'Confirmar turno',
+      `${profesional.nombre}\n${profesional.especialidad} - hoy a las ${hora}`,
+      () => {
+        reservar(profesional, hora);
+        avisar('Turno reservado', 'Lo vas a encontrar en la pestaña Mis turnos.');
+      },
+    );
+  };
+
+  const soltarTurno = (hora: string) => {
+    confirmar('Cancelar turno', `¿Querés liberar el turno de las ${hora}?`, () =>
+      cancelar(idReserva(hora)),
+    );
+  };
 
   return (
     <SectionList
@@ -44,6 +75,7 @@ const DetalleProfesional = () => {
       sections={franjas}
       keyExtractor={(horario) => horario.hora}
       stickySectionHeadersEnabled={false}
+      extraData={reservas}
       ListHeaderComponent={
         <View>
           <Stack.Screen options={{ title: profesional.especialidad }} />
@@ -78,6 +110,15 @@ const DetalleProfesional = () => {
                 {libres.length} de {profesional.horarios.length} horarios disponibles
               </Text>
             </View>
+
+            <TouchableOpacity
+              style={estilos.llamar}
+              onPress={() => Linking.openURL(`tel:${profesional.telefono.replace(/[^\d+]/g, '')}`)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="call-outline" size={16} color={colores.primarioOscuro} />
+              <Text style={estilos.llamarTexto}>Llamar al consultorio</Text>
+            </TouchableOpacity>
           </View>
         </View>
       }
@@ -88,7 +129,9 @@ const DetalleProfesional = () => {
         <HorarioFila
           hora={item.hora}
           ocupado={item.ocupado}
-          onPress={() => avisar('Turno seleccionado', `${profesional.nombre} a las ${item.hora}`)}
+          propio={esMio(item.hora)}
+          onReservar={() => pedirTurno(item.hora)}
+          onCancelar={() => soltarTurno(item.hora)}
         />
       )}
     />
@@ -102,6 +145,12 @@ const estilos = StyleSheet.create({
   },
   contenido: {
     paddingBottom: 32,
+  },
+  centrado: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colores.fondo,
   },
   cabecera: {
     alignItems: 'center',
@@ -163,6 +212,21 @@ const estilos = StyleSheet.create({
     color: colores.texto,
     lineHeight: 19,
   },
+  llamar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: colores.primarioSuave,
+  },
+  llamarTexto: {
+    marginLeft: 8,
+    fontSize: 14,
+    fontWeight: '700',
+    color: colores.primarioOscuro,
+  },
   franja: {
     fontSize: 15,
     fontWeight: '700',
@@ -171,20 +235,7 @@ const estilos = StyleSheet.create({
     marginTop: 22,
     marginBottom: 10,
   },
-  vacio: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colores.fondo,
-    padding: 24,
-  },
-  vacioTexto: {
-    marginTop: 10,
-    fontSize: 15,
-    color: colores.texto,
-  },
   volver: {
-    marginTop: 10,
     fontSize: 14,
     fontWeight: '600',
     color: colores.primario,

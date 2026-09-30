@@ -1,16 +1,12 @@
-import { Horario } from '../types';
-
-export type FranjaHoraria = {
+export type FranjaHoraria<T> = {
   titulo: string;
-  data: Horario[];
+  data: T[];
 };
 
-export const agruparPorFranja = (horarios: Horario[]): FranjaHoraria[] => {
-  const manana = horarios.filter((horario) => Number(horario.hora.slice(0, 2)) < 13);
-  const tarde = horarios.filter((horario) => Number(horario.hora.slice(0, 2)) >= 13);
+const esDeManana = (hora: string) => Number(hora.slice(0, 2)) < 13;
 
-  return [
-    { titulo: 'Mañana', data: manana },
-    { titulo: 'Tarde', data: tarde },
+export const agruparPorFranja = <T extends { hora: string }>(items: T[]): FranjaHoraria<T>[] =>
+  [
+    { titulo: 'Mañana', data: items.filter((item) => esDeManana(item.hora)) },
+    { titulo: 'Tarde', data: items.filter((item) => !esDeManana(item.hora)) },
   ].filter((franja) => franja.data.length > 0);
-};

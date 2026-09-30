@@ -3,7 +3,7 @@ import ChipEspecialidad from './ChipEspecialidad';
 import { Especialidad } from '../types';
 
 type Props = {
-  especialidades: Especialidad[];
+  especialidades: (Especialidad & { disponibles?: number })[];
   seleccionada: string | null;
   onSeleccionar: (id: string) => void;
 };

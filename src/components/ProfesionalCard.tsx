@@ -4,7 +4,7 @@ import HorarioChip from './HorarioChip';
 import { colores, sombra } from '../theme/colores';
 import { Profesional } from '../types';
 
-type Props = Omit<Profesional, 'id'> & {
+type Props = Omit<Profesional, 'id' | 'telefono'> & {
   onPress: () => void;
   onElegirHorario: (hora: string) => void;
 };

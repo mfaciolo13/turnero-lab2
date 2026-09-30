@@ -16,7 +16,12 @@ export type Metrica = {
 export type Especialidad = {
   id: string;
   nombre: string;
+};
+
+export type ResumenEspecialidad = Especialidad & {
+  profesionales: number;
   disponibles: number;
+  ocupados: number;
 };
 
 export type Horario = {
@@ -32,5 +37,16 @@ export type Profesional = {
   foto: string;
   valoracion: number;
   cobertura: string;
+  telefono: string;
   horarios: Horario[];
+};
+
+export type Reserva = {
+  id: string;
+  profesionalId: number;
+  profesional: string;
+  especialidad: string;
+  consultorio: string;
+  foto: string;
+  hora: string;
 };
