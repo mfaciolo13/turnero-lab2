@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colores } from '../theme/colores';
+import { useTheme } from '../theme/ThemeProvider';
+import { Tema } from '../theme/tema';
 import { Tono } from '../types';
 
 type Props = {
@@ -8,35 +10,35 @@ type Props = {
   tono: Tono;
 };
 
-const tonos: Record<Tono, string> = {
-  exito: colores.exito,
-  primario: colores.primario,
-  ocupado: colores.ocupado,
+const crearEstilos = ({ colores, espacio, fuente }: Tema) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      alignItems: 'center',
+      paddingVertical: espacio.medio,
+    },
+    valor: {
+      fontSize: fuente.numero,
+      fontWeight: '700',
+    },
+    etiqueta: {
+      marginTop: 4,
+      fontSize: fuente.chica,
+      color: colores.textoSuave,
+      textAlign: 'center',
+    },
+  });
+
+const Indicador = ({ valor, etiqueta, tono }: Props) => {
+  const tema = useTheme();
+  const estilos = useMemo(() => crearEstilos(tema), [tema]);
+
+  return (
+    <View style={estilos.contenedor}>
+      <Text style={[estilos.valor, { color: tema.colores[tono] }]}>{valor}</Text>
+      <Text style={estilos.etiqueta}>{etiqueta}</Text>
+    </View>
+  );
 };
-
-const Indicador = ({ valor, etiqueta, tono }: Props) => (
-  <View style={estilos.contenedor}>
-    <Text style={[estilos.valor, { color: tonos[tono] }]}>{valor}</Text>
-    <Text style={estilos.etiqueta}>{etiqueta}</Text>
-  </View>
-);
-
-const estilos = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 14,
-  },
-  valor: {
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  etiqueta: {
-    marginTop: 4,
-    fontSize: 12,
-    color: colores.textoSuave,
-    textAlign: 'center',
-  },
-});
 
 export default Indicador;

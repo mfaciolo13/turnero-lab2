@@ -1,9 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../../src/theme/ThemeProvider';
 import { useTurnosStore } from '../../src/store/turnos';
-import { colores } from '../../src/theme/colores';
 
 const TabsLayout = () => {
+  const { colores } = useTheme();
   const cantidad = useTurnosStore((state) => state.reservas.length);
 
   return (

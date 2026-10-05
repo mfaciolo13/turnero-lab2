@@ -45,11 +45,19 @@ y los horarios se calculan a partir del id para que siempre den lo mismo.
 | `useIndicadores` | Combina el resumen de la API con las reservas del store |
 | `useTurnosStore` | Store de Zustand con las reservas y las acciones `reservar` y `cancelar` |
 
+## Tema
+
+El diseño se centraliza en `src/theme/tema.ts` (colores, espacios, radios y tamaños de
+fuente). `src/theme/ThemeProvider.tsx` es un `ThemeProvider` propio hecho con
+`createContext`: envuelve la app en `app/_layout.tsx` y cualquier componente lee el tema
+con el hook `useTheme()`. `Aviso`, `Seccion`, `Indicador` y `Estado` arman su
+`StyleSheet` a partir del tema, y los layouts de navegacion toman de ahi los colores.
+
 ## Estructura
 
 ```
 app/
-  _layout.tsx             QueryClientProvider y stack raiz
+  _layout.tsx             QueryClientProvider, ThemeProvider y stack raiz
   (tabs)/_layout.tsx      tabs con el badge de Mis turnos
   (tabs)/index.tsx        agenda del dia
   (tabs)/especialidades.tsx
@@ -62,7 +70,7 @@ src/
   data/                   datos fijos del centro
   hooks/                  hooks de TanStack Query y auxiliares
   store/                  store de Zustand
-  theme/                  colores, degradados y sombras
+  theme/                  tema, ThemeProvider, colores y degradados
   utils/                  agrupado por franja y dialogos
   types.ts                tipos del dominio
 ```
@@ -93,6 +101,7 @@ src/
 | I | Pantalla principal con la agenda del dia | Terminado |
 | I | Componentes reutilizables comunicados por props | Terminado |
 | I | ScrollView vertical y horizontal | Terminado |
+| II | Tema centralizado con un ThemeProvider propio y useTheme | Terminado |
 | II | Gradiente en el encabezado con expo-linear-gradient | Terminado |
 | II | Tarjetas y chips tactiles con TouchableOpacity | Terminado |
 | II | Horarios con TouchableHighlight y estado ocupado | Terminado |

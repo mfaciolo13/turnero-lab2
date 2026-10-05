@@ -2,7 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { colores } from '../src/theme/colores';
+import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
+import { tema } from '../src/theme/tema';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,22 +14,32 @@ const queryClient = new QueryClient({
   },
 });
 
+const Navegacion = () => {
+  const { colores } = useTheme();
+
+  return (
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: colores.primarioOscuro },
+        headerTintColor: colores.superficie,
+        headerTitleStyle: { fontWeight: '700' },
+        contentStyle: { backgroundColor: colores.fondo },
+      }}
+    >
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="profesional/[id]" options={{ title: 'Profesional' }} />
+    </Stack>
+  );
+};
+
 const RootLayout = () => (
   <QueryClientProvider client={queryClient}>
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: colores.primarioOscuro },
-          headerTintColor: colores.superficie,
-          headerTitleStyle: { fontWeight: '700' },
-          contentStyle: { backgroundColor: colores.fondo },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="profesional/[id]" options={{ title: 'Profesional' }} />
-      </Stack>
-    </SafeAreaProvider>
+    <ThemeProvider theme={tema}>
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <Navegacion />
+      </SafeAreaProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
