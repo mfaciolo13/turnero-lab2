@@ -4,6 +4,7 @@ export const centro: Centro = {
   nombre: 'Turnero Laboratorio 2',
   sede: 'Sede Centro - Av. Colon 1240',
   fecha: 'Agenda de hoy',
+  coordenadas: { latitude: -31.4124, longitude: -64.1833 },
 };
 
 export const especialidades: Especialidad[] = [

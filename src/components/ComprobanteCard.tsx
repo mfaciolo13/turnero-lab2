@@ -1,6 +1,6 @@
-import { Ref, useMemo } from 'react';
+import { ReactNode, Ref, useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { Tema } from '../theme/tema';
 import { Reserva } from '../types';
@@ -8,6 +8,9 @@ import { Reserva } from '../types';
 type Props = {
   reserva: Reserva;
   cardRef?: Ref<View>;
+  sello?: string;
+  escalaSello?: Animated.Value;
+  children?: ReactNode;
 };
 
 const crearEstilos = ({ colores, espacio, radio, fuente }: Tema) =>
@@ -27,6 +30,7 @@ const crearEstilos = ({ colores, espacio, radio, fuente }: Tema) =>
       backgroundColor: colores.primarioSuave,
     },
     datos: { flex: 1, marginLeft: espacio.medio },
+    sello: { fontSize: 34, marginLeft: espacio.chico },
     nombre: { fontSize: 16, fontWeight: '700', color: colores.texto },
     especialidad: { fontSize: 13, fontWeight: '600', color: colores.primario, marginTop: 2 },
     separador: { height: 1, backgroundColor: colores.borde, marginVertical: espacio.medio },
@@ -50,7 +54,7 @@ const crearEstilos = ({ colores, espacio, radio, fuente }: Tema) =>
     sinOrdenTexto: { fontSize: fuente.normal, color: colores.textoSuave },
   });
 
-const ComprobanteCard = ({ reserva, cardRef }: Props) => {
+const ComprobanteCard = ({ reserva, cardRef, sello, escalaSello, children }: Props) => {
   const tema = useTheme();
   const estilos = useMemo(() => crearEstilos(tema), [tema]);
 
@@ -62,6 +66,14 @@ const ComprobanteCard = ({ reserva, cardRef }: Props) => {
           <Text style={estilos.nombre}>{reserva.profesional}</Text>
           <Text style={estilos.especialidad}>{reserva.especialidad}</Text>
         </View>
+        {sello ? (
+          <Animated.Text
+            style={[estilos.sello, escalaSello ? { transform: [{ scale: escalaSello }] } : null]}
+            testID="sello"
+          >
+            {sello}
+          </Animated.Text>
+        ) : null}
       </View>
 
       <View style={estilos.separador} />
@@ -88,6 +100,9 @@ const ComprobanteCard = ({ reserva, cardRef }: Props) => {
           <Text style={estilos.sinOrdenTexto}>Sin orden adjunta</Text>
         </View>
       )}
+
+      {children ? <Text style={estilos.titulo}>Firma del paciente</Text> : null}
+      {children}
     </View>
   );
 };

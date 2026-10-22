@@ -36,14 +36,7 @@ const crearEstilos = ({ colores, radio, fuente }: Tema) =>
     texto: { marginLeft: 8, fontSize: fuente.normal, fontWeight: '700' },
   });
 
-const Boton = ({
-  titulo,
-  onPress,
-  icono,
-  variante = 'primario',
-  deshabilitado,
-  testID,
-}: Props) => {
+const Boton = ({ titulo, onPress, icono, variante = 'primario', deshabilitado, testID }: Props) => {
   const tema = useTheme();
   const estilos = useMemo(() => crearEstilos(tema), [tema]);
 

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,9 +13,15 @@ const MisTurnos = () => {
   const router = useRouter();
   const reservas = useTurnosStore((state) => state.reservas);
   const cancelar = useTurnosStore((state) => state.cancelar);
+  const [saliendo, setSaliendo] = useState<string | null>(null);
 
   const quitar = (id: string, hora: string) => {
-    confirmar('Cancelar turno', `¿Querés liberar el turno de las ${hora}?`, () => cancelar(id));
+    confirmar('Cancelar turno', `¿Querés liberar el turno de las ${hora}?`, () => setSaliendo(id));
+  };
+
+  const terminarSalida = (id: string) => {
+    cancelar(id);
+    setSaliendo(null);
   };
 
   return (
@@ -32,9 +39,7 @@ const MisTurnos = () => {
             </Text>
           ) : null
         }
-        renderSectionHeader={({ section }) => (
-          <Text style={estilos.franja}>{section.titulo}</Text>
-        )}
+        renderSectionHeader={({ section }) => <Text style={estilos.franja}>{section.titulo}</Text>}
         renderItem={({ item }) => (
           <ReservaCard
             profesional={item.profesional}
@@ -43,6 +48,8 @@ const MisTurnos = () => {
             foto={item.foto}
             hora={item.hora}
             tieneOrden={item.orden !== null}
+            saliendo={saliendo === item.id}
+            onSalio={() => terminarSalida(item.id)}
             onPress={() => router.push({ pathname: '/turno/[id]', params: { id: item.id } })}
             onCancelar={() => quitar(item.id, item.hora)}
           />

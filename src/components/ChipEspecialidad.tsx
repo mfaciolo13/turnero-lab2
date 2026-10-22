@@ -17,7 +17,9 @@ const ChipEspecialidad = ({ nombre, disponibles, destacado, onPress }: Props) =>
     <Text style={[estilos.nombre, destacado && estilos.nombreDestacado]}>{nombre}</Text>
     {disponibles === undefined ? null : (
       <View style={[estilos.globo, destacado && estilos.globoDestacado]}>
-        <Text style={[estilos.cantidad, destacado && estilos.cantidadDestacada]}>{disponibles}</Text>
+        <Text style={[estilos.cantidad, destacado && estilos.cantidadDestacada]}>
+          {disponibles}
+        </Text>
       </View>
     )}
   </TouchableOpacity>

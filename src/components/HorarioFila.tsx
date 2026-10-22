@@ -1,5 +1,6 @@
+import { useEffect, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colores } from '../theme/colores';
 
 type Props = {
@@ -11,11 +12,26 @@ type Props = {
 };
 
 const HorarioFila = ({ hora, ocupado, propio, onReservar, onCancelar }: Props) => {
+  const escala = useRef(new Animated.Value(1)).current;
+  const eraPropio = useRef(propio);
+
+  useEffect(() => {
+    if (propio && !eraPropio.current) {
+      Animated.sequence([
+        Animated.spring(escala, { toValue: 1.06, useNativeDriver: true }),
+        Animated.spring(escala, { toValue: 1, useNativeDriver: true }),
+      ]).start();
+    }
+    eraPropio.current = propio;
+  }, [propio, escala]);
+
   const icono = propio ? 'checkmark-circle' : ocupado ? 'lock-closed-outline' : 'time-outline';
   const color = propio ? colores.exito : ocupado ? colores.ocupado : colores.primario;
 
   return (
-    <View style={[estilos.fila, propio && estilos.filaPropia]}>
+    <Animated.View
+      style={[estilos.fila, propio && estilos.filaPropia, { transform: [{ scale: escala }] }]}
+    >
       <View style={estilos.izquierda}>
         <Ionicons name={icono} size={18} color={color} />
         <Text style={[estilos.hora, ocupado && !propio && estilos.horaOcupada]}>{hora}</Text>
@@ -33,7 +49,7 @@ const HorarioFila = ({ hora, ocupado, propio, onReservar, onCancelar }: Props) =
           <Text style={estilos.botonTexto}>Reservar</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </Animated.View>
   );
 };
 

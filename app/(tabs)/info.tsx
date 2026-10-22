@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Aviso from '../../src/components/Aviso';
+import DistanciaCentro from '../../src/components/DistanciaCentro';
 import ResumenDelDia from '../../src/components/ResumenDelDia';
 import { useIndicadores } from '../../src/hooks/useIndicadores';
 import { centro } from '../../src/data/centro';
@@ -44,6 +45,8 @@ const Info = () => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <DistanciaCentro centro={centro.coordenadas} />
 
         <ResumenDelDia indicadores={indicadores} />
 

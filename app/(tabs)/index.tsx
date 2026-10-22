@@ -9,6 +9,7 @@ import Buscador from '../../src/components/Buscador';
 import Seccion from '../../src/components/Seccion';
 import Estado from '../../src/components/Estado';
 import Aviso from '../../src/components/Aviso';
+import { useAcelerometro } from '../../src/hooks/useAcelerometro';
 import { useProfesionales, useResumenEspecialidades } from '../../src/hooks/useProfesionales';
 import { useIndicadores } from '../../src/hooks/useIndicadores';
 import { useDemora } from '../../src/hooks/useDemora';
@@ -33,6 +34,13 @@ const Agenda = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useProfesionales(busquedaDemorada);
+  const { disponible } = useAcelerometro({
+    onSacudida: () => {
+      if (!isRefetching) {
+        refetch();
+      }
+    },
+  });
   const resumen = useResumenEspecialidades();
   const indicadores = useIndicadores();
   const reservas = useTurnosStore((state) => state.reservas);
@@ -111,7 +119,10 @@ const Agenda = () => {
               />
             </Seccion>
 
-            <Seccion titulo="Profesionales" detalle={`${listado.length} cargados`}>
+            <Seccion
+              titulo="Profesionales"
+              detalle={`${listado.length} cargados${disponible ? ' · agitá para actualizar' : ''}`}
+            >
               <Buscador
                 valor={busqueda}
                 onCambiar={setBusqueda}

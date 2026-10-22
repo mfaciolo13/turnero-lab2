@@ -1,9 +1,19 @@
 export type Tono = 'exito' | 'primario' | 'ocupado';
 
+export type Coordenadas = {
+  latitude: number;
+  longitude: number;
+};
+
+export type Ubicacion = Coordenadas & {
+  lugar?: string;
+};
+
 export type Centro = {
   nombre: string;
   sede: string;
   fecha: string;
+  coordenadas: Coordenadas;
 };
 
 export type Metrica = {

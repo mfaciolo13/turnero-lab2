@@ -29,7 +29,10 @@ const Navegacion = () => {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="profesional/[id]" options={{ title: 'Profesional' }} />
       <Stack.Screen name="turno/[id]" options={{ title: 'Comprobante' }} />
-      <Stack.Screen name="camara" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
+      <Stack.Screen
+        name="camara"
+        options={{ headerShown: false, presentation: 'fullScreenModal' }}
+      />
     </Stack>
   );
 };

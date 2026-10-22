@@ -33,3 +33,26 @@ export const pedirAjustes = (titulo: string, mensaje: string) => {
     { text: 'Abrir ajustes', onPress: () => Linking.openSettings() },
   ]);
 };
+
+export const abrirAjustesUbicacion = () => {
+  if (Platform.OS === 'android') {
+    Linking.sendIntent('android.settings.LOCATION_SOURCE_SETTINGS').catch(() =>
+      Linking.openSettings(),
+    );
+    return;
+  }
+
+  Linking.openSettings();
+};
+
+export const avisarGpsApagado = () => {
+  if (Platform.OS === 'web') {
+    window.alert('GPS apagado\n\nEncendé la ubicación del dispositivo.');
+    return;
+  }
+
+  Alert.alert('GPS apagado', 'Encendé la ubicación del celular para usar "Dónde estoy".', [
+    { text: 'Ahora no', style: 'cancel' },
+    { text: 'Abrir ajustes', onPress: abrirAjustesUbicacion },
+  ]);
+};

@@ -1,12 +1,15 @@
+import { useEffect, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colores, sombra } from '../theme/colores';
 import { Reserva } from '../types';
 
 type Props = Omit<Reserva, 'id' | 'profesionalId' | 'orden'> & {
   tieneOrden: boolean;
+  saliendo: boolean;
   onPress: () => void;
   onCancelar: () => void;
+  onSalio: () => void;
 };
 
 const ReservaCard = ({
@@ -16,42 +19,74 @@ const ReservaCard = ({
   foto,
   hora,
   tieneOrden,
+  saliendo,
   onPress,
   onCancelar,
-}: Props) => (
-  <TouchableOpacity style={estilos.tarjeta} onPress={onPress} activeOpacity={0.8}>
-    <View style={estilos.hora}>
-      <Text style={estilos.horaTexto}>{hora}</Text>
-      <Text style={estilos.horaEtiqueta}>hs</Text>
-    </View>
+  onSalio,
+}: Props) => {
+  const opacidad = useRef(new Animated.Value(1)).current;
+  const desplazamiento = useRef(new Animated.Value(0)).current;
 
-    <Image style={estilos.foto} source={{ uri: foto }} />
+  useEffect(() => {
+    if (!saliendo) {
+      return;
+    }
 
-    <View style={estilos.datos}>
-      <Text style={estilos.nombre} numberOfLines={1}>
-        {profesional}
-      </Text>
-      <Text style={estilos.especialidad}>{especialidad}</Text>
-      <Text style={estilos.consultorio} numberOfLines={1}>
-        {consultorio}
-      </Text>
-      <View style={estilos.orden}>
-        <Ionicons
-          name={tieneOrden ? 'checkmark-circle' : 'document-attach-outline'}
-          size={13}
-          color={tieneOrden ? colores.exito : colores.textoSuave}
-        />
-        <Text style={[estilos.ordenTexto, tieneOrden && estilos.ordenAdjunta]}>
-          {tieneOrden ? 'Orden adjunta' : 'Sin orden'}
-        </Text>
-      </View>
-    </View>
+    Animated.parallel([
+      Animated.timing(opacidad, {
+        toValue: 0,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+      Animated.timing(desplazamiento, {
+        toValue: 60,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+    ]).start(({ finished }) => {
+      if (finished) {
+        onSalio();
+      }
+    });
+  }, [saliendo, opacidad, desplazamiento, onSalio]);
 
-    <TouchableOpacity style={estilos.cancelar} onPress={onCancelar} activeOpacity={0.7}>
-      <Ionicons name="trash-outline" size={18} color={colores.ocupado} />
-    </TouchableOpacity>
-  </TouchableOpacity>
-);
+  return (
+    <Animated.View style={{ opacity: opacidad, transform: [{ translateX: desplazamiento }] }}>
+      <TouchableOpacity style={estilos.tarjeta} onPress={onPress} activeOpacity={0.8}>
+        <View style={estilos.hora}>
+          <Text style={estilos.horaTexto}>{hora}</Text>
+          <Text style={estilos.horaEtiqueta}>hs</Text>
+        </View>
+
+        <Image style={estilos.foto} source={{ uri: foto }} />
+
+        <View style={estilos.datos}>
+          <Text style={estilos.nombre} numberOfLines={1}>
+            {profesional}
+          </Text>
+          <Text style={estilos.especialidad}>{especialidad}</Text>
+          <Text style={estilos.consultorio} numberOfLines={1}>
+            {consultorio}
+          </Text>
+          <View style={estilos.orden}>
+            <Ionicons
+              name={tieneOrden ? 'checkmark-circle' : 'document-attach-outline'}
+              size={13}
+              color={tieneOrden ? colores.exito : colores.textoSuave}
+            />
+            <Text style={[estilos.ordenTexto, tieneOrden && estilos.ordenAdjunta]}>
+              {tieneOrden ? 'Orden adjunta' : 'Sin orden'}
+            </Text>
+          </View>
+        </View>
+
+        <TouchableOpacity style={estilos.cancelar} onPress={onCancelar} activeOpacity={0.7}>
+          <Ionicons name="trash-outline" size={18} color={colores.ocupado} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
 
 const estilos = StyleSheet.create({
   tarjeta: {

@@ -1,24 +1,29 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
-import { ScrollView, Share, StyleSheet, View } from 'react-native';
+import { Animated, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Boton from '../../src/components/Boton';
 import ComprobanteCard from '../../src/components/ComprobanteCard';
 import Estado from '../../src/components/Estado';
+import FirmaPad from '../../src/components/FirmaPad';
+import { elegirSelloDistinto, sellos } from '../../src/data/sellos';
+import { useAcelerometro } from '../../src/hooks/useAcelerometro';
 import { useTurnosStore } from '../../src/store/turnos';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { Tema } from '../../src/theme/tema';
 import { avisar, pedirAjustes } from '../../src/utils/dialogos';
+import { Trazo } from '../../src/utils/firma';
 
-const crearEstilos = ({ colores, espacio }: Tema) =>
+const crearEstilos = ({ colores, espacio, fuente }: Tema) =>
   StyleSheet.create({
     pantalla: { flex: 1, backgroundColor: colores.fondo },
     contenido: { padding: espacio.grande },
     grupo: { marginTop: espacio.medio },
     espacio: { height: espacio.chico },
+    tip: { marginTop: espacio.chico, fontSize: fuente.chica, color: colores.textoSuave },
     vacio: { flex: 1, justifyContent: 'center', backgroundColor: colores.fondo },
   });
 
@@ -29,9 +34,30 @@ const Comprobante = () => {
   const tema = useTheme();
   const estilos = useMemo(() => crearEstilos(tema), [tema]);
   const tarjeta = useRef<View>(null);
+  const escalaSello = useRef(new Animated.Value(1)).current;
+  const [sello, setSello] = useState(sellos[0]);
+  const [trazos, setTrazos] = useState<Trazo[]>([]);
 
   const reserva = useTurnosStore((state) => state.reservas.find((item) => item.id === id));
   const adjuntarOrden = useTurnosStore((state) => state.adjuntarOrden);
+
+  const cambiarSello = () => {
+    setSello((actual) => elegirSelloDistinto(actual));
+    Animated.sequence([
+      Animated.spring(escalaSello, { toValue: 1.8, useNativeDriver: true }),
+      Animated.spring(escalaSello, { toValue: 1, useNativeDriver: true }),
+    ]).start();
+  };
+
+  const { inclinacion, disponible } = useAcelerometro({
+    onSacudida: cambiarSello,
+    onVolcado: cambiarSello,
+  });
+
+  const rotar = inclinacion.interpolate({
+    inputRange: [-1, 1],
+    outputRange: ['-15deg', '15deg'],
+  });
 
   if (!reserva) {
     return (
@@ -72,7 +98,10 @@ const Comprobante = () => {
       }
 
       const uri = await captureRef(tarjeta, { format: 'png', quality: 1 });
-      await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: 'Compartir comprobante' });
+      await Sharing.shareAsync(uri, {
+        mimeType: 'image/png',
+        dialogTitle: 'Compartir comprobante',
+      });
     } catch {
       avisar('No se pudo compartir el comprobante', 'Probá de nuevo.');
     }
@@ -80,7 +109,7 @@ const Comprobante = () => {
 
   const compartirTexto = async () => {
     await Share.share({
-      message: `Turno confirmado\n${reserva.profesional} - ${reserva.especialidad}\nHoy a las ${reserva.hora} hs\n${reserva.consultorio}`,
+      message: `${sello} Turno confirmado\n${reserva.profesional} - ${reserva.especialidad}\nHoy a las ${reserva.hora} hs\n${reserva.consultorio}`,
     });
   };
 
@@ -91,7 +120,34 @@ const Comprobante = () => {
     >
       <Stack.Screen options={{ title: 'Comprobante' }} />
 
-      <ComprobanteCard reserva={reserva} cardRef={tarjeta} />
+      <Animated.View style={{ transform: [{ rotate: rotar }] }}>
+        <ComprobanteCard
+          reserva={reserva}
+          cardRef={tarjeta}
+          sello={sello}
+          escalaSello={escalaSello}
+        >
+          <FirmaPad trazos={trazos} onCambiar={setTrazos} />
+        </ComprobanteCard>
+      </Animated.View>
+
+      <Text style={estilos.tip}>
+        {disponible
+          ? 'Inclinalo para girar el comprobante · agitalo para cambiar el sello'
+          : 'Este dispositivo no tiene acelerómetro'}
+      </Text>
+
+      {trazos.length > 0 ? (
+        <View style={estilos.grupo}>
+          <Boton
+            titulo="Borrar firma"
+            icono="trash-outline"
+            variante="peligro"
+            onPress={() => setTrazos([])}
+            testID="boton-borrar-firma"
+          />
+        </View>
+      ) : null}
 
       <View style={estilos.grupo}>
         <Boton

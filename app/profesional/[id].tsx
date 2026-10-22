@@ -1,7 +1,15 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image, Linking, SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Linking,
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import HorarioFila from '../../src/components/HorarioFila';
 import Estado from '../../src/components/Estado';
 import { useProfesional } from '../../src/hooks/useProfesionales';
@@ -31,11 +39,7 @@ const DetalleProfesional = () => {
     return (
       <View style={estilos.centrado}>
         <Stack.Screen options={{ title: 'Profesional' }} />
-        <Estado
-          tipo="error"
-          mensaje="No pudimos cargar este profesional."
-          onReintentar={refetch}
-        />
+        <Estado tipo="error" mensaje="No pudimos cargar este profesional." onReintentar={refetch} />
         <Text style={estilos.volver} onPress={() => router.back()}>
           Volver a la agenda
         </Text>
@@ -47,9 +51,7 @@ const DetalleProfesional = () => {
   const esMio = (hora: string) => reservas.some((reserva) => reserva.id === idReserva(hora));
 
   const franjas = agruparPorFranja(profesional.horarios);
-  const libres = profesional.horarios.filter(
-    (horario) => !horario.ocupado && !esMio(horario.hora),
-  );
+  const libres = profesional.horarios.filter((horario) => !horario.ocupado && !esMio(horario.hora));
 
   const pedirTurno = (hora: string) => {
     confirmar(
@@ -122,9 +124,7 @@ const DetalleProfesional = () => {
           </View>
         </View>
       }
-      renderSectionHeader={({ section }) => (
-        <Text style={estilos.franja}>{section.titulo}</Text>
-      )}
+      renderSectionHeader={({ section }) => <Text style={estilos.franja}>{section.titulo}</Text>}
       renderItem={({ item }) => (
         <HorarioFila
           hora={item.hora}

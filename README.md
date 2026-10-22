@@ -7,7 +7,8 @@ funcionalidad sobre la misma app.
 La agenda muestra los profesionales del centro con sus horarios del dia. Se puede
 filtrar por especialidad, buscar por nombre, entrar al detalle de cada profesional,
 reservar un turno y verlo o cancelarlo desde la pestaña Mis turnos. Cada turno tiene un
-comprobante donde se adjunta la orden médica (cámara o galería) y que se comparte como imagen.
+comprobante donde se adjunta la orden médica (cámara o galería), se firma con el dedo y se
+comparte como imagen. En "El centro" se calcula a cuántos kilómetros estás de la sede.
 
 ## Integrantes
 
@@ -71,7 +72,7 @@ src/
   api/                    cliente de axios y llamadas a la API
   components/             componentes reutilizables
   data/                   datos fijos del centro
-  hooks/                  hooks de TanStack Query y auxiliares
+  hooks/                  hooks de TanStack Query, sensores y ubicacion
   store/                  store de Zustand
   theme/                  tema, ThemeProvider, colores y degradados
   utils/                  agrupado por franja y dialogos
@@ -92,7 +93,9 @@ src/
 | `HorarioChip` | hora, ocupado, onPress | Horario libre u ocupado dentro de la tarjeta |
 | `HorarioFila` | hora, ocupado, propio, onReservar, onCancelar | Fila de horario para reservar o cancelar |
 | `ReservaCard` | profesional, especialidad, consultorio, foto, hora, tieneOrden, onPress, onCancelar | Turno reservado en Mis turnos |
-| `ComprobanteCard` | reserva, cardRef | Comprobante con marco: es lo que se captura para compartir |
+| `ComprobanteCard` | reserva, cardRef, sello, escalaSello, children | Comprobante con marco: es lo que se captura para compartir |
+| `FirmaPad` | trazos, onCambiar | Zona de firma que dibuja con onTouchStart y onTouchMove |
+| `DistanciaCentro` | centro | Tarjeta que busca tu ubicacion y calcula la distancia a la sede |
 | `Boton` | titulo, onPress, icono, variante, deshabilitado | Boton del tema con variantes primario, secundario y peligro |
 | `Buscador` | valor, onCambiar, placeholder | TextInput con icono y boton para limpiar |
 | `Estado` | tipo, mensaje, onReintentar | Carga, error o lista vacia |
@@ -130,13 +133,16 @@ src/
 | VI | Orden medica con la camara (expo-camera) y permisos | Terminado |
 | VI | Orden medica desde la galeria (expo-image-picker) | Terminado |
 | VI | Compartir el comprobante como imagen (view-shot y expo-sharing) y como texto | Terminado |
-| VI | Ubicacion y distancia al centro (expo-location) | Pendiente |
-| VI | Agitar para actualizar y comprobante que se inclina (acelerometro) | Pendiente |
-| VI | Animaciones al reservar y cancelar | Pendiente |
-| VI | Firma del paciente con eventos tactiles | Pendiente |
+| VI | Ubicacion, nombre del lugar y distancia al centro (expo-location) | Terminado |
+| VI | Avisos si falta el permiso o el GPS esta apagado | Terminado |
+| VI | Agitar el celular para actualizar la agenda (acelerometro) | Terminado |
+| VI | El comprobante se inclina con el celular y cambia de sello al agitar | Terminado |
+| VI | Animaciones con Animated: pop al reservar y salida al cancelar | Terminado |
+| VI | Firma del paciente con eventos tactiles | Terminado |
 | VI | Ficha del paciente con tablas EAV en SQLite | Pendiente |
 | VI | Reservas guardadas en el dispositivo | Pendiente |
 | Testing | Tests unitarios y de integracion con Jest | Pendiente |
 
-La camara, la galeria y el compartir como imagen necesitan un celular real con Expo Go:
-en la version web solo se ve el flujo de permisos.
+La camara, la galeria, el GPS, el acelerometro y el compartir como imagen necesitan un celular
+real con Expo Go. En la version web solo se ven los flujos de permisos, los sensores quedan
+desactivados y la firma no dibuja porque el navegador no entrega las coordenadas del toque.
