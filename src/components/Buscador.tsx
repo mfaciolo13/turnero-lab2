@@ -20,9 +20,10 @@ const Buscador = ({ valor, onCambiar, placeholder }: Props) => (
       autoCapitalize="none"
       autoCorrect={false}
       returnKeyType="search"
+      testID="input-busqueda"
     />
     {valor.length > 0 ? (
-      <TouchableOpacity onPress={() => onCambiar('')} activeOpacity={0.7}>
+      <TouchableOpacity onPress={() => onCambiar('')} activeOpacity={0.7} testID="limpiar-busqueda">
         <Ionicons name="close-circle" size={18} color={colores.textoSuave} />
       </TouchableOpacity>
     ) : null}

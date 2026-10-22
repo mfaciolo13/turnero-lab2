@@ -126,6 +126,7 @@ const Camara = () => {
         <TouchableOpacity
           style={estilos.lateral}
           onPress={() => setLado((actual) => (actual === 'back' ? 'front' : 'back'))}
+          testID="girar-camara"
         >
           <Ionicons name="camera-reverse" size={28} color="#fff" />
         </TouchableOpacity>

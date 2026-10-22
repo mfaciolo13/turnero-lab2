@@ -28,10 +28,11 @@ npm start
 
 Luego escanear el codigo QR con Expo Go, o correr `npm run android` / `npm run web`.
 
-Para revisar los tipos:
+Para revisar los tipos y correr los tests:
 
 ```bash
 npx tsc --noEmit
+npm test
 ```
 
 ## Datos
@@ -86,6 +87,38 @@ Limitaciones del modelo EAV que se notan aca: `value` es siempre texto (no hay t
 puede declarar una FK desde `reservas.paciente_id` y las consultas son mas pesadas que sobre una
 tabla comun. Para los datos fijos (las reservas) se usa una tabla relacional normal.
 
+## Tests
+
+Los tests usan **Jest** (con el preset `jest-expo`) y **React Native Testing Library**, y siguen
+la idea de probar como lo haria el usuario: se renderiza el componente, se simula lo que el
+usuario hace (escribir, tocar) y se verifica lo que ve en pantalla. Cada test arma el caso
+(Arrange), actua (Act) y verifica (Assert), y los elementos se encuentran por su texto o por
+su `testID`.
+
+```bash
+npm test                    # corre todo
+npm test -- --watch         # vuelve a correr al guardar
+npm test -- --coverage      # agrega el informe de cobertura
+```
+
+| Tipo | Que prueba | Donde |
+| --- | --- | --- |
+| Unitarios | Funciones puras: franjas horarias, normalizar campos de la ficha, distancia, sensores, firma, texto del comprobante, sellos | `src/utils/__tests__`, `src/data/__tests__` |
+| Datos | El SQL real de `entity_attributes`, la vista `vw_pacientes` y las reservas, ejecutado sobre un SQLite en memoria | `src/db/__tests__` |
+| Store y API | Reservar, cancelar y no duplicar turnos; el mapeo de DummyJSON a profesional | `src/store/__tests__`, `src/api/__tests__` |
+| Hooks | Espera del buscador, acelerometro (sacudir, volcar, esperar 600 ms), ubicacion con sus avisos, hooks de TanStack Query | `src/hooks/__tests__` |
+| Integracion de componentes | Buscador, horarios, firma, formularios de la ficha, tarjetas | `src/components/__tests__` |
+| Integracion de pantallas | Agenda, detalle del profesional, Mis turnos, comprobante, camara, ficha de punta a punta, especialidades y El centro | `__tests__` |
+
+Los tests de las pantallas estan en la carpeta `__tests__` de la raiz porque todo lo que esta
+dentro de `app/` se convierte en una ruta.
+
+Los modulos nativos (camara, GPS, acelerometro, galeria, compartir) se reemplazan por
+versiones simuladas, asi que los tests verifican la logica de la app y no el sistema operativo:
+esas funciones se siguen probando en un celular con Expo Go. Para probar la base de datos sin
+un celular, `src/test/sqliteEnMemoria.ts` implementa la API de `expo-sqlite` sobre el SQLite
+que trae Node 22, de modo que el SQL que se ejecuta es el mismo de la app.
+
 ## Estructura
 
 ```
@@ -109,7 +142,11 @@ src/
   store/                  store de Zustand (reservas guardadas en SQLite)
   theme/                  tema, ThemeProvider, colores y degradados
   utils/                  agrupado por franja y dialogos
+  test/                   ayudas para los tests
   types.ts                tipos del dominio
+__tests__/                tests de las pantallas
+jest.setup.ts             configuracion de Jest
+metro.config.js           soporte de .wasm para SQLite en web
 ```
 
 ## Componentes
@@ -182,7 +219,10 @@ src/
 | VI | Familiares y turnos a nombre del paciente seleccionado | Terminado |
 | VI | Reservas guardadas en el dispositivo y cargadas al abrir la app | Terminado |
 | VI | Foto de la orden copiada al almacenamiento de la app (expo-file-system) | Terminado |
-| Testing | Tests unitarios y de integracion con Jest | Pendiente |
+| Testing | Tests unitarios de las funciones puras | Terminado |
+| Testing | Tests de integracion de componentes y pantallas con Testing Library | Terminado |
+| Testing | Tests de la capa de datos sobre SQLite real en memoria | Terminado |
+| Testing | Cobertura de sentencias cercana al 97% | Terminado |
 
 La camara, la galeria, el GPS, el acelerometro y el compartir como imagen necesitan un celular
 real con Expo Go. En la version web solo se ven los flujos de permisos, los sensores quedan

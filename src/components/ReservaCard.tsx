@@ -80,7 +80,12 @@ const ReservaCard = ({
           </View>
         </View>
 
-        <TouchableOpacity style={estilos.cancelar} onPress={onCancelar} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={estilos.cancelar}
+          onPress={onCancelar}
+          testID="cancelar-turno"
+          activeOpacity={0.7}
+        >
           <Ionicons name="trash-outline" size={18} color={colores.ocupado} />
         </TouchableOpacity>
       </TouchableOpacity>

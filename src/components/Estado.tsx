@@ -54,7 +54,7 @@ const Estado = ({ tipo, mensaje, onReintentar }: Props) => {
   return (
     <View style={estilos.contenedor}>
       {tipo === 'cargando' ? (
-        <ActivityIndicator size="large" color={tema.colores.primario} />
+        <ActivityIndicator size="large" color={tema.colores.primario} testID="indicador-carga" />
       ) : (
         <Ionicons name={iconos[tipo]} size={40} color={tema.colores.textoSuave} />
       )}

@@ -13,6 +13,7 @@ const ChipEspecialidad = ({ nombre, disponibles, destacado, onPress }: Props) =>
     style={[estilos.contenedor, destacado && estilos.destacado]}
     onPress={onPress}
     activeOpacity={0.7}
+    testID={`especialidad-${nombre}`}
   >
     <Text style={[estilos.nombre, destacado && estilos.nombreDestacado]}>{nombre}</Text>
     {disponibles === undefined ? null : (

@@ -93,6 +93,7 @@ const Agenda = () => {
   return (
     <View style={estilos.pantalla}>
       <FlatList
+        testID="lista-profesionales"
         data={listado}
         keyExtractor={(profesional) => String(profesional.id)}
         showsVerticalScrollIndicator={false}
