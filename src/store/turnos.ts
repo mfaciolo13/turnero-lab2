@@ -5,6 +5,7 @@ type TurnosState = {
   reservas: Reserva[];
   reservar: (profesional: Profesional, hora: string) => void;
   cancelar: (id: string) => void;
+  adjuntarOrden: (id: string, uri: string) => void;
   estaReservado: (profesionalId: number, hora: string) => boolean;
 };
 
@@ -26,6 +27,7 @@ export const useTurnosStore = create<TurnosState>((set, get) => ({
       consultorio: profesional.consultorio,
       foto: profesional.foto,
       hora,
+      orden: null,
     };
 
     set((state) => ({
@@ -35,6 +37,13 @@ export const useTurnosStore = create<TurnosState>((set, get) => ({
 
   cancelar: (id) =>
     set((state) => ({ reservas: state.reservas.filter((reserva) => reserva.id !== id) })),
+
+  adjuntarOrden: (id, uri) =>
+    set((state) => ({
+      reservas: state.reservas.map((reserva) =>
+        reserva.id === id ? { ...reserva, orden: uri } : reserva,
+      ),
+    })),
 
   estaReservado: (profesionalId, hora) =>
     get().reservas.some((reserva) => reserva.id === idDeReserva(profesionalId, hora)),

@@ -3,7 +3,8 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colores, sombra } from '../theme/colores';
 import { Reserva } from '../types';
 
-type Props = Omit<Reserva, 'id' | 'profesionalId'> & {
+type Props = Omit<Reserva, 'id' | 'profesionalId' | 'orden'> & {
+  tieneOrden: boolean;
   onPress: () => void;
   onCancelar: () => void;
 };
@@ -14,6 +15,7 @@ const ReservaCard = ({
   consultorio,
   foto,
   hora,
+  tieneOrden,
   onPress,
   onCancelar,
 }: Props) => (
@@ -33,6 +35,16 @@ const ReservaCard = ({
       <Text style={estilos.consultorio} numberOfLines={1}>
         {consultorio}
       </Text>
+      <View style={estilos.orden}>
+        <Ionicons
+          name={tieneOrden ? 'checkmark-circle' : 'document-attach-outline'}
+          size={13}
+          color={tieneOrden ? colores.exito : colores.textoSuave}
+        />
+        <Text style={[estilos.ordenTexto, tieneOrden && estilos.ordenAdjunta]}>
+          {tieneOrden ? 'Orden adjunta' : 'Sin orden'}
+        </Text>
+      </View>
     </View>
 
     <TouchableOpacity style={estilos.cancelar} onPress={onCancelar} activeOpacity={0.7}>
@@ -96,6 +108,19 @@ const estilos = StyleSheet.create({
     fontSize: 12,
     color: colores.textoSuave,
     marginTop: 2,
+  },
+  orden: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  ordenTexto: {
+    marginLeft: 4,
+    fontSize: 11,
+    color: colores.textoSuave,
+  },
+  ordenAdjunta: {
+    color: colores.exito,
   },
   cancelar: {
     padding: 8,

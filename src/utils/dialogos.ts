@@ -1,4 +1,4 @@
-import { Alert, Platform } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 
 export const avisar = (titulo: string, mensaje: string) => {
   if (Platform.OS === 'web') {
@@ -19,5 +19,17 @@ export const confirmar = (titulo: string, mensaje: string, onAceptar: () => void
   Alert.alert(titulo, mensaje, [
     { text: 'Volver', style: 'cancel' },
     { text: 'Confirmar', onPress: onAceptar },
+  ]);
+};
+
+export const pedirAjustes = (titulo: string, mensaje: string) => {
+  if (Platform.OS === 'web') {
+    window.alert(`${titulo}\n\n${mensaje}`);
+    return;
+  }
+
+  Alert.alert(titulo, mensaje, [
+    { text: 'Ahora no', style: 'cancel' },
+    { text: 'Abrir ajustes', onPress: () => Linking.openSettings() },
   ]);
 };

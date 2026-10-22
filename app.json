@@ -22,7 +22,20 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Turnero Laboratorio 2 usa la cámara para sacarle una foto a tu orden médica.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Turnero Laboratorio 2 accede a tus fotos para adjuntar la orden médica."
+        }
+      ]
     ],
     "scheme": "turnero"
   }

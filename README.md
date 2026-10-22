@@ -6,7 +6,8 @@ funcionalidad sobre la misma app.
 
 La agenda muestra los profesionales del centro con sus horarios del dia. Se puede
 filtrar por especialidad, buscar por nombre, entrar al detalle de cada profesional,
-reservar un turno y verlo o cancelarlo desde la pestaña Mis turnos.
+reservar un turno y verlo o cancelarlo desde la pestaña Mis turnos. Cada turno tiene un
+comprobante donde se adjunta la orden médica (cámara o galería) y que se comparte como imagen.
 
 ## Integrantes
 
@@ -64,6 +65,8 @@ app/
   (tabs)/mis-turnos.tsx   turnos reservados
   (tabs)/info.tsx         datos del centro
   profesional/[id].tsx    detalle con ruta dinamica
+  turno/[id].tsx          comprobante del turno
+  camara.tsx              camara para la orden medica
 src/
   api/                    cliente de axios y llamadas a la API
   components/             componentes reutilizables
@@ -88,7 +91,9 @@ src/
 | `ProfesionalCard` | nombre, especialidad, consultorio, foto, valoracion, cobertura, horarios, onPress, onElegirHorario | Tarjeta del profesional con foto y turnos |
 | `HorarioChip` | hora, ocupado, onPress | Horario libre u ocupado dentro de la tarjeta |
 | `HorarioFila` | hora, ocupado, propio, onReservar, onCancelar | Fila de horario para reservar o cancelar |
-| `ReservaCard` | profesional, especialidad, consultorio, foto, hora, onPress, onCancelar | Turno reservado en Mis turnos |
+| `ReservaCard` | profesional, especialidad, consultorio, foto, hora, tieneOrden, onPress, onCancelar | Turno reservado en Mis turnos |
+| `ComprobanteCard` | reserva, cardRef | Comprobante con marco: es lo que se captura para compartir |
+| `Boton` | titulo, onPress, icono, variante, deshabilitado | Boton del tema con variantes primario, secundario y peligro |
 | `Buscador` | valor, onCambiar, placeholder | TextInput con icono y boton para limpiar |
 | `Estado` | tipo, mensaje, onReintentar | Carga, error o lista vacia |
 | `Seccion` | titulo, detalle, children | Titulo de seccion reutilizable |
@@ -121,8 +126,17 @@ src/
 | V | Pull to refresh para revalidar los datos | Terminado |
 | V | Reservar y cancelar turnos con un store de Zustand | Terminado |
 | V | Badge e indicadores que leen el store sin pasar props | Terminado |
-| VI | Persistencia local de los turnos reservados | Pendiente |
+| VI | Comprobante del turno en la ruta dinamica /turno/[id] | Terminado |
+| VI | Orden medica con la camara (expo-camera) y permisos | Terminado |
+| VI | Orden medica desde la galeria (expo-image-picker) | Terminado |
+| VI | Compartir el comprobante como imagen (view-shot y expo-sharing) y como texto | Terminado |
+| VI | Ubicacion y distancia al centro (expo-location) | Pendiente |
+| VI | Agitar para actualizar y comprobante que se inclina (acelerometro) | Pendiente |
 | VI | Animaciones al reservar y cancelar | Pendiente |
+| VI | Firma del paciente con eventos tactiles | Pendiente |
+| VI | Ficha del paciente con tablas EAV en SQLite | Pendiente |
+| VI | Reservas guardadas en el dispositivo | Pendiente |
+| Testing | Tests unitarios y de integracion con Jest | Pendiente |
 
-Las reservas viven en memoria mientras la app esta abierta. Guardarlas en el
-dispositivo depende de AsyncStorage y SQLite, que se ven en la Unidad VI.
+La camara, la galeria y el compartir como imagen necesitan un celular real con Expo Go:
+en la version web solo se ve el flujo de permisos.

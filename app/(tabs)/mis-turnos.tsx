@@ -28,7 +28,7 @@ const MisTurnos = () => {
           reservas.length > 0 ? (
             <Text style={estilos.bajada}>
               Tenés {reservas.length} turno{reservas.length === 1 ? '' : 's'} para hoy. Tocá uno
-              para ver al profesional.
+              para ver el comprobante.
             </Text>
           ) : null
         }
@@ -42,9 +42,8 @@ const MisTurnos = () => {
             consultorio={item.consultorio}
             foto={item.foto}
             hora={item.hora}
-            onPress={() =>
-              router.push({ pathname: '/profesional/[id]', params: { id: item.profesionalId } })
-            }
+            tieneOrden={item.orden !== null}
+            onPress={() => router.push({ pathname: '/turno/[id]', params: { id: item.id } })}
             onCancelar={() => quitar(item.id, item.hora)}
           />
         )}

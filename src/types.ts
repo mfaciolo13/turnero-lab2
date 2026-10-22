@@ -49,4 +49,5 @@ export type Reserva = {
   consultorio: string;
   foto: string;
   hora: string;
+  orden: string | null;
 };
