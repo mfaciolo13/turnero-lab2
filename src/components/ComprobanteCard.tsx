@@ -3,10 +3,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { Tema } from '../theme/tema';
-import { Reserva } from '../types';
+import { Paciente, Reserva } from '../types';
 
 type Props = {
   reserva: Reserva;
+  paciente?: Paciente | null;
   cardRef?: Ref<View>;
   sello?: string;
   escalaSello?: Animated.Value;
@@ -54,7 +55,7 @@ const crearEstilos = ({ colores, espacio, radio, fuente }: Tema) =>
     sinOrdenTexto: { fontSize: fuente.normal, color: colores.textoSuave },
   });
 
-const ComprobanteCard = ({ reserva, cardRef, sello, escalaSello, children }: Props) => {
+const ComprobanteCard = ({ reserva, paciente, cardRef, sello, escalaSello, children }: Props) => {
   const tema = useTheme();
   const estilos = useMemo(() => crearEstilos(tema), [tema]);
 
@@ -86,6 +87,28 @@ const ComprobanteCard = ({ reserva, cardRef, sello, escalaSello, children }: Pro
         <Ionicons name="location-outline" size={18} color={tema.colores.primario} />
         <Text style={estilos.dato}>{reserva.consultorio}</Text>
       </View>
+
+      {paciente ? (
+        <>
+          <Text style={estilos.titulo}>Paciente</Text>
+          <View style={estilos.fila}>
+            <Ionicons name="person-outline" size={18} color={tema.colores.primario} />
+            <Text style={estilos.dato} testID="paciente">
+              {paciente.nombre}
+              {paciente.parentesco ? ` (${paciente.parentesco})` : ''}
+            </Text>
+          </View>
+          {paciente.obraSocial ? (
+            <View style={estilos.fila}>
+              <Ionicons name="card-outline" size={18} color={tema.colores.primario} />
+              <Text style={estilos.dato} testID="obra-social">
+                {paciente.obraSocial}
+                {paciente.afiliado ? ` · Afiliado ${paciente.afiliado}` : ''}
+              </Text>
+            </View>
+          ) : null}
+        </>
+      ) : null}
 
       <Text style={estilos.titulo}>Orden médica</Text>
       {reserva.orden ? (

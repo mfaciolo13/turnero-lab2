@@ -35,7 +35,8 @@
         {
           "photosPermission": "Turnero Laboratorio 2 accede a tus fotos para adjuntar la orden médica."
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "scheme": "turnero"
   }

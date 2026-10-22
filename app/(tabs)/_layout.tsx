@@ -45,6 +45,15 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
+        name="ficha"
+        options={{
+          title: 'Mi ficha',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-circle" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="info"
         options={{
           title: 'El centro',

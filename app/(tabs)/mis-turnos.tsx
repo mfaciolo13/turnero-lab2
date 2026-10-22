@@ -19,8 +19,8 @@ const MisTurnos = () => {
     confirmar('Cancelar turno', `¿Querés liberar el turno de las ${hora}?`, () => setSaliendo(id));
   };
 
-  const terminarSalida = (id: string) => {
-    cancelar(id);
+  const terminarSalida = async (id: string) => {
+    await cancelar(id);
     setSaliendo(null);
   };
 

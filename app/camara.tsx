@@ -8,6 +8,7 @@ import Boton from '../src/components/Boton';
 import { useTurnosStore } from '../src/store/turnos';
 import { useTheme } from '../src/theme/ThemeProvider';
 import { Tema } from '../src/theme/tema';
+import { conservarImagen } from '../src/utils/archivos';
 import { avisar } from '../src/utils/dialogos';
 
 const crearEstilos = ({ colores, espacio, fuente }: Tema) =>
@@ -92,7 +93,7 @@ const Camara = () => {
     try {
       const foto = await camara.current.takePictureAsync({ quality: 0.7 });
       if (foto && reservaId) {
-        adjuntarOrden(reservaId, foto.uri);
+        await adjuntarOrden(reservaId, await conservarImagen(foto.uri));
         router.back();
       }
     } catch {

@@ -13,6 +13,7 @@ import {
 import HorarioFila from '../../src/components/HorarioFila';
 import Estado from '../../src/components/Estado';
 import { useProfesional } from '../../src/hooks/useProfesionales';
+import { usePaciente } from '../../src/hooks/useFicha';
 import { useTurnosStore } from '../../src/store/turnos';
 import { agruparPorFranja } from '../../src/utils/franjas';
 import { avisar, confirmar } from '../../src/utils/dialogos';
@@ -26,6 +27,8 @@ const DetalleProfesional = () => {
   const reservas = useTurnosStore((state) => state.reservas);
   const reservar = useTurnosStore((state) => state.reservar);
   const cancelar = useTurnosStore((state) => state.cancelar);
+  const pacienteActivo = useTurnosStore((state) => state.pacienteActivo);
+  const { data: paciente } = usePaciente(pacienteActivo);
 
   if (isLoading) {
     return (
@@ -57,8 +60,8 @@ const DetalleProfesional = () => {
     confirmar(
       'Confirmar turno',
       `${profesional.nombre}\n${profesional.especialidad} - hoy a las ${hora}`,
-      () => {
-        reservar(profesional, hora);
+      async () => {
+        await reservar(profesional, hora);
         avisar('Turno reservado', 'Lo vas a encontrar en la pestaña Mis turnos.');
       },
     );
@@ -105,6 +108,12 @@ const DetalleProfesional = () => {
             <View style={estilos.datoFila}>
               <Ionicons name="card-outline" size={18} color={colores.primario} />
               <Text style={estilos.dato}>{profesional.cobertura}</Text>
+            </View>
+            <View style={estilos.datoFila}>
+              <Ionicons name="person-outline" size={18} color={colores.primario} />
+              <Text style={estilos.dato} testID="paciente-del-turno">
+                Turno para: {paciente?.nombre ?? '...'}
+              </Text>
             </View>
             <View style={estilos.datoFila}>
               <Ionicons name="calendar-outline" size={18} color={colores.primario} />

@@ -51,8 +51,22 @@ export type Profesional = {
   horarios: Horario[];
 };
 
+export type Atributo = {
+  attribute: string;
+  value: string | null;
+};
+
+export type Paciente = {
+  id: number;
+  nombre: string;
+  parentesco: string;
+  obraSocial: string | null;
+  afiliado: string | null;
+};
+
 export type Reserva = {
   id: string;
+  pacienteId: number;
   profesionalId: number;
   profesional: string;
   especialidad: string;

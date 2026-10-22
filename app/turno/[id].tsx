@@ -10,11 +10,14 @@ import ComprobanteCard from '../../src/components/ComprobanteCard';
 import Estado from '../../src/components/Estado';
 import FirmaPad from '../../src/components/FirmaPad';
 import { elegirSelloDistinto, sellos } from '../../src/data/sellos';
+import { usePaciente } from '../../src/hooks/useFicha';
 import { useAcelerometro } from '../../src/hooks/useAcelerometro';
 import { useTurnosStore } from '../../src/store/turnos';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { Tema } from '../../src/theme/tema';
+import { conservarImagen } from '../../src/utils/archivos';
 import { avisar, pedirAjustes } from '../../src/utils/dialogos';
+import { textoComprobante } from '../../src/utils/comprobante';
 import { Trazo } from '../../src/utils/firma';
 
 const crearEstilos = ({ colores, espacio, fuente }: Tema) =>
@@ -40,6 +43,7 @@ const Comprobante = () => {
 
   const reserva = useTurnosStore((state) => state.reservas.find((item) => item.id === id));
   const adjuntarOrden = useTurnosStore((state) => state.adjuntarOrden);
+  const { data: paciente } = usePaciente(reserva?.pacienteId ?? 0);
 
   const cambiarSello = () => {
     setSello((actual) => elegirSelloDistinto(actual));
@@ -86,7 +90,7 @@ const Comprobante = () => {
     });
 
     if (!resultado.canceled) {
-      adjuntarOrden(reserva.id, resultado.assets[0].uri);
+      await adjuntarOrden(reserva.id, await conservarImagen(resultado.assets[0].uri));
     }
   };
 
@@ -109,7 +113,7 @@ const Comprobante = () => {
 
   const compartirTexto = async () => {
     await Share.share({
-      message: `${sello} Turno confirmado\n${reserva.profesional} - ${reserva.especialidad}\nHoy a las ${reserva.hora} hs\n${reserva.consultorio}`,
+      message: textoComprobante(reserva, paciente ?? null, sello),
     });
   };
 
@@ -123,6 +127,7 @@ const Comprobante = () => {
       <Animated.View style={{ transform: [{ rotate: rotar }] }}>
         <ComprobanteCard
           reserva={reserva}
+          paciente={paciente}
           cardRef={tarjeta}
           sello={sello}
           escalaSello={escalaSello}

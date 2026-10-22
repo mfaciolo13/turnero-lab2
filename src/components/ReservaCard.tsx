@@ -4,7 +4,7 @@ import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react
 import { colores, sombra } from '../theme/colores';
 import { Reserva } from '../types';
 
-type Props = Omit<Reserva, 'id' | 'profesionalId' | 'orden'> & {
+type Props = Omit<Reserva, 'id' | 'pacienteId' | 'profesionalId' | 'orden'> & {
   tieneOrden: boolean;
   saliendo: boolean;
   onPress: () => void;
